@@ -1,59 +1,66 @@
-# Web Application Security Lab -- DVWA Manual Environment
+# DVWA Web Security Lab
 
-## Overview
+Hands-on vulnerability testing using Damn Vulnerable Web Application (DVWA).
+All testing performed locally in a controlled lab environment.
 
-This repository documents a hands-on web application security lab
-conducted using a manually configured DVWA environment on Kali Linux.
-The focus was on understanding both exploitation techniques and
-underlying mechanics of common web vulnerabilities.
+---
 
 ## Environment
 
--   Kali Linux (VirtualBox)
--   Apache2
--   MariaDB
--   PHP 8.4
--   DVWA (manual installation and configuration)
+- Apache 2.4 (Debian)
+- PHP 8.4
+- MariaDB / MySQL
+- DVWA Security Level: Low (with source code comparison for Medium/High/Impossible)
+
+---
 
 ## Vulnerabilities Tested
 
-### 1. SQL Injection
+### SQL Injection
+- Error-based
+- Boolean-based blind
+- Enumerated database structure
 
--   Classic SQL injection
--   Boolean-based blind SQL injection
--   Time-based SQL injection (conceptual analysis)
--   Database enumeration via inference logic
+### Cross-Site Scripting (XSS)
+- Reflected
+- Stored
 
-### 2. Cross-Site Scripting (XSS)
+### Cross-Site Request Forgery (CSRF)
+- GET-based state change
+- Analysis of token protections
 
--   Reflected XSS
--   Stored XSS
--   Session cookie access via JavaScript
--   Analysis of HttpOnly, CSP, and output encoding
+### Command Injection
+- OS command execution via unsanitized input
 
-### 3. Cross-Site Request Forgery (CSRF)
+### Authorization Bypass (Broken Access Control)
+- Non-admin user accessed admin-only endpoint via direct URL
+- Backend API exposed full user list
+- Unauthorized modification of admin account data
 
--   Password change exploitation via forged GET requests
--   Analysis of token-based mitigation
--   Comparison of Low vs High security settings
+### Local File Inclusion (LFI)
+- Directory traversal via `?page=` parameter
+- Read `/etc/passwd`
+- Extracted DVWA database credentials using:
+  `php://filter/convert.base64-encode`
 
-## Key Concepts Demonstrated
+---
 
--   Separation of code and data (prepared statements)
--   Output encoding vs filtering
--   Session management mechanics
--   Authentication vs intent validation
--   Defense-in-depth strategy
+## Key Takeaways
 
-## Skills Demonstrated
+- Hiding UI elements does not enforce authorization.
+- Output encoding prevents XSS even when access control is broken.
+- LFI can escalate into credential disclosure.
+- PHP stream wrappers can expose application source code.
+- Broken Access Control is often more dangerous than injection flaws.
 
--   Manual lab environment setup and debugging
--   Apache and PHP troubleshooting
--   MariaDB configuration and user privilege management
--   HTTP request analysis
--   Logical vulnerability exploitation methodology
+---
 
 ## Disclaimer
 
-This lab was conducted in a controlled local environment for educational
-purposes only.
+This repository documents testing performed in a local educational lab environment only.
+No testing was performed against production systems.
+
+## Screenshots
+
+See `/screenshots` folder for proof-of-concept evidence.
+
