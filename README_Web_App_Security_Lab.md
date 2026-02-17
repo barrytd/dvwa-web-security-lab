@@ -93,13 +93,13 @@ In real-world applications, this could result in privilege escalation or account
 ### Evidence
 
 #### Direct URL Access
-![Direct URL Access](screenshots/authorization_by_pass_direct_url_access.png)
+![Direct URL Access](screenshots/authorization_bypass_direct_url_access.png)
 
 #### API Data Exposure
-![API Data Exposure](screenshots/authorization_by_pass_api_data_exposure.png)
+![API Data Exposure](screenshots/authorization_bypass_api_data_exposure.png)
 
 #### Unauthorized Admin Update
-![Unauthorized Admin Update](screenshots/authorization_by_pass_admin_update.png)
+![Unauthorized Admin Update](screenshots/authorization_bypass_admin_update.png)
 
 #### IDOR / Direct Object Access
 ![IDOR Direct Object Access](screenshots/idor_direct_object_access.png)
