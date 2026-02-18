@@ -1,160 +1,132 @@
-# DVWA Web Security Lab – Junior Pentester Portfolio
+# DVWA Web Security Lab – Web Application Security Portfolio
 
-This repository documents hands-on vulnerability testing performed against Damn Vulnerable Web Application (DVWA) in a controlled local lab environment.
+This repository documents structured security testing performed against 
+**Damn Vulnerable Web Application (DVWA)** in a controlled local lab environment.
 
-The objective of this project was to practice identifying, exploiting, and understanding common web application vulnerabilities while documenting findings in a professional, evidence-based format.
+The purpose of this project was to simulate a real-world web application assessment by:
+- Identifying vulnerabilities
+- Exploiting them manually
+- Reviewing source code for root cause analysis
+- Documenting technical impact
+- Understanding remediation strategies
+
+This lab demonstrates practical experience with multiple OWASP Top 10 vulnerability categories.
 
 ---
 
-# Environment
+# Lab Environment
 
 - Apache 2.4 (Debian)
-- PHP 8.4
+- PHP 8.x
 - MariaDB / MySQL
-- DVWA hosted locally
-- Security level tested: Low (with source comparison for higher levels)
+- Kali Linux attacker system
+- DVWA (Low, Medium, High security levels)
+- Manual testing + source code review
 
 ---
 
-# Vulnerabilities Tested
+# Vulnerabilities Demonstrated
 
 ---
 
-## 1. SQL Injection (Error-Based & Blind)
+## 1. SQL Injection – Medium (Boolean & UNION-Based)
 
-- Confirmed injectable parameter
-- Demonstrated error-based SQLi
-- Performed boolean-based blind SQLi
-- Enumerated database structure and metadata
+### Techniques Demonstrated
+- Boolean-based SQL injection
+- UNION-based data extraction
+- Database version enumeration
+- Current database extraction
+- Current database user extraction
 
-Key Learning:
-- Blind SQLi relies on true/false logic instead of visible errors.
-- Input sanitization and prepared statements are critical.
+### Impact
+Improper input validation allowed structured query manipulation and disclosure of sensitive database metadata.
 
----
+### Evidence
 
-## 2. Cross-Site Scripting (XSS)
+#### Boolean Injection
+![Boolean SQLi](screenshots/04_sql_medium_boolean_injection_response.png)
 
-### Reflected XSS
-- Injected script into user input
-- Observed immediate client-side execution
+#### Database Version Disclosure
+![Version Disclosure](screenshots/05_sql_medium_version_extraction.png)
 
-### Stored XSS
-- Injected persistent payload stored in database
-- Script executed upon page load
+#### Database Name Disclosure
+![Database Name](screenshots/06_sql_medium_database_extraction.png)
 
-Key Learning:
-- Output encoding prevents XSS even when access control is broken.
-- Persistent XSS can compromise authenticated sessions.
-
----
-
-## 3. Cross-Site Request Forgery (CSRF)
-
-- Demonstrated password modification via forged request
-- Analyzed lack of CSRF token protection at low security level
-
-Key Learning:
-- Authentication does not verify user intent.
-- CSRF tokens must be validated server-side.
+#### Database User Disclosure
+![DB User](screenshots/07_sql_medium_db_user_extraction.png)
 
 ---
 
-## 4. Command Injection
-
-- Injected OS-level commands via unsanitized input
-- Confirmed system command execution
-
-Key Learning:
-- Applications must restrict command execution context.
-- Input validation alone is insufficient without proper sanitization.
-
----
-
-## 5. Authorization Bypass (Broken Access Control)
+## 2. SQL Injection – High (Session-Based Injection)
 
 ### Vulnerability
-
-The application restricted access to an admin-only feature using UI controls only.  
-No server-side authorization checks were enforced.
+User-controlled input was stored in a session variable and directly concatenated into a SQL query without proper sanitization.
 
 ### Exploitation
-
-- Logged in as non-admin user (`gordonb`)
-- Accessed admin-only endpoint directly via URL
-- Retrieved full user list from backend API
-- Successfully modified admin account information
+- Closed string context
+- Performed boolean-based injection
+- Reviewed source code to confirm vulnerable query construction
 
 ### Impact
-
-Broken access control allowed unauthorized data access and modification.  
-In real-world applications, this could result in privilege escalation or account takeover.
+Session-based SQL injection allowed bypass of query restrictions and unauthorized data retrieval.
 
 ### Evidence
 
-#### Direct URL Access
-![Direct URL Access](screenshots/authorization_bypass_direct_url_access.png)
+#### Successful Boolean Bypass
+![High SQLi Bypass](screenshots/dvwa_sqli_high_bypass.png)
 
-#### API Data Exposure
-![API Data Exposure](screenshots/authorization_bypass_api_data_exposure.png)
-
-#### Unauthorized Admin Update
-![Unauthorized Admin Update](screenshots/authorization_bypass_admin_update.png)
-
-#### IDOR / Direct Object Access
-![IDOR Direct Object Access](screenshots/idor_direct_object_access.png)
+#### Vulnerable Source Code
+![High SQLi Source](screenshots/dvwa_sqli_high_vulnerable_code.png)
 
 ---
 
-## 6. Local File Inclusion (LFI)
+## 3. API Security Testing
 
 ### Vulnerability
+API v1 exposed sensitive password hashes and permitted unauthenticated access to user data.
 
-The application passed a user-controlled `page` parameter directly into a PHP include function without validation.
-
-### Exploitation Steps
-
-- Performed directory traversal using `../`
-- Successfully read `/etc/passwd`
-- Retrieved Apache configuration files
-- Used `php://filter/convert.base64-encode` wrapper
-- Extracted and decoded DVWA configuration file
-- Recovered database credentials
+### Comparison
+API v2 removed password fields from responses, demonstrating improved secure design.
 
 ### Impact
-
-LFI enabled arbitrary local file read and credential disclosure.  
-In production systems, this could expose sensitive secrets, API keys, and database credentials.
+Sensitive data exposure through unauthenticated endpoints could enable credential compromise or offline attacks.
 
 ### Evidence
 
-#### /etc/passwd Disclosure
-![LFI /etc/passwd](screenshots/lfi_etc_passwd_success.png)
+#### API v1 Password Exposure
+![API v1 Password Exposure](screenshots/api_v1_password_hash_exposure.png)
 
-#### Apache Configuration Disclosure
-![LFI Apache Config](screenshots/lfi_apache_conf.png)
+#### API v1 Unauthenticated Access (curl)
+![API curl Proof](screenshots/03_api_v1_password_exposed_curl_proof.png)
 
-#### /etc/issue Disclosure
-![LFI /etc/issue](screenshots/lfi_etc_issue.png)
-
-#### /proc/version Disclosure
-![LFI /proc/version](screenshots/lfi_proc_version.png)
-
-#### Config File Base64 Disclosure
-![LFI Config Base64](screenshots/lfi_config_base64_credentials.png)
-
-#### Config File Decoded Credentials
-![LFI Config Decoded](screenshots/lfi_config_decoded_credentials.png)
+#### API v2 Improved Response
+![API v2 Secure](screenshots/api_v2_no_password_exposure.png)
 
 ---
 
-# Key Security Lessons Learned
+## 4. Weak Session Management
 
-- Broken Access Control is often more critical than injection flaws.
-- UI restrictions do not enforce security — authorization must be server-side.
-- LFI combined with PHP stream wrappers can expose application source code.
-- Credential disclosure enables lateral movement and deeper compromise.
-- Secure coding requires validation, authorization enforcement, and output encoding.
+### Vulnerability
+Session identifiers were sequential and predictable.
+
+### Impact
+Predictable session tokens increase the risk of session hijacking and account compromise.
+
+### Evidence
+
+#### Sequential Session Cookie
+![Weak Session IDs](screenshots/weak_session_ids_sequential_cookie.png)
+
+---
+
+# Key Security Takeaways
+
+- Direct string concatenation in SQL queries leads to injection vulnerabilities.
+- Boolean logic and UNION queries allow structured data extraction.
+- Session-based injection can bypass naive input validation.
+- APIs must enforce authentication and minimize sensitive data exposure.
+- Session identifiers must be cryptographically random.
+- Secure coding requires prepared statements, strict authorization checks, and output encoding.
 
 ---
 
@@ -162,4 +134,4 @@ In production systems, this could expose sensitive secrets, API keys, and databa
 
 All testing documented in this repository was performed in a controlled local lab environment for educational purposes only.
 
-No unauthorized testing was performed against production systems.
+No unauthorized testing was conducted against production systems.
