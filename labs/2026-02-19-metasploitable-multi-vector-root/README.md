@@ -71,6 +71,7 @@ Although initial access was limited, local enumeration revealed a SUID misconfig
 ![SUID Discovery](04_suid_discovery.png)
 
 The binary `/usr/bin/nmap` was configured with the SUID bit set. Using interactive mode:
+
 nmap --interactive
 !sh
 
