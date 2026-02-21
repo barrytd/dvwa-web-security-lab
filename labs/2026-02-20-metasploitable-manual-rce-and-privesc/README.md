@@ -25,13 +25,9 @@ A reverse shell was obtained with root privileges.
 
 ![Reverse Shell Root](03_reverse_shell_root.png)
 
-Root access was validated:
+Root access was validated by accessing sensitive system files:
 
-- `whoami`
-- `id`
-- `/etc/shadow` access
-
-![Shadow Access](06_shadow_access.png)
+![Root Impact Validation](04_root_impact_validation.png)
 
 ---
 
@@ -41,11 +37,11 @@ Logged in as user `msfadmin` to simulate a lower-privileged compromise.
 
 User context and group memberships:
 
-![User Context](03_user_context_id.png)
+![User Context](01_user_context_id.png)
 
 Enumeration revealed unrestricted sudo permissions:
 
-![Sudo Enumeration](04_sudo_privileges_enum.png)
+![Sudo Enumeration](02_sudo_privileges_enum.png)
 
 Privilege escalation was achieved using:
 
@@ -55,7 +51,7 @@ sudo -i
 
 Root access confirmed:
 
-![Sudo Root Escalation](05_sudo_root_escalation.png)
+![Sudo Root Escalation](03_root_escalation_sudo.png)
 
 ---
 
@@ -102,5 +98,3 @@ The Metasploitable 2 host was compromised through multiple independent privilege
 This lab demonstrates structured attacker workflow:
 
 Enumeration → Exploitation → Privilege Escalation → Data Access
-
-The exercise highlights the security risks of legacy services, weak privilege configuration, and exposed application credentials.
