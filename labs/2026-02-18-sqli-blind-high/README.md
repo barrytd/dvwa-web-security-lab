@@ -66,7 +66,7 @@ Blind extraction was performed using:
 
 ## Position 1 Extraction
 
-![Position 1 Extraction](../../screenshots/01_sqli_blind_high_position_1_extraction.png)
+![Position 1 Extraction](01_sqli_blind_high_position_1_extraction.png)
 
 Only payload 5 produced:
 
@@ -80,7 +80,7 @@ Position 1 = 5
 
 ## Position 2 Extraction
 
-![Position 2 Extraction](../../screenshots/02_sqli_blind_high_position_2_extraction.png)
+![Position 2 Extraction](02_sqli_blind_high_position_2_extraction.png)
 
 Only payload f produced:
 
@@ -94,7 +94,7 @@ Position 2 = f
 
 ## ASCII-Based Boolean Extraction Confirmation
 
-![ASCII Extraction Proof](../../screenshots/blind_sqli_high_ascii_reference_proof.png)
+![ASCII Extraction Proof](blind_sqli_high_ascii_reference_proof.png)
 
 Demonstrates ASCII comparison using `ORD()` and `MID()` during blind extraction.
 
@@ -110,7 +110,7 @@ Demonstrates ASCII comparison using `ORD()` and `MID()` during blind extraction.
 
 ## Full Hash Reconstruction Proof
 
-![Full Hash Extraction](../../screenshots/dvwa_blind_sql_injection_high_password_hash_extraction.png)
+![Full Hash Extraction](dvwa_blind_sql_injection_high_password_hash_extraction.png)
 
 ---
 
@@ -122,7 +122,7 @@ Verified via:
 echo -n password | md5sum
 ```
 
-![MD5 Verification](../../screenshots/03_sqli_blind_high_extracted_hash.png)
+![MD5 Verification](03_sqli_blind_high_extracted_hash.png)
 
 The extracted hash matches the MD5 of "password".
 
@@ -132,7 +132,7 @@ Administrator credentials successfully recovered.
 
 ## Observed Mitigation Attempt (High Level)
 
-![Mitigation Attempt](../../screenshots/sqli_blind_high_mitigation_int_casting_proof.png)
+![Mitigation Attempt](sqli_blind_high_mitigation_int_casting_proof.png)
 
 High security attempts integer casting; however, unsafe query construction still allows injection.
 

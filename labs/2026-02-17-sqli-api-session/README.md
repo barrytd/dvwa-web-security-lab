@@ -17,16 +17,16 @@ DVWA testing focused on:
 
 ### Evidence
 #### Boolean Injection
-![Boolean SQLi](../../screenshots/04_sql_medium_boolean_injection_response.png)
+![Boolean SQLi](04_sql_medium_boolean_injection_response.png)
 
 #### Database Version Disclosure
-![Version Disclosure](../../screenshots/05_sql_medium_version_extraction.png)
+![Version Disclosure](05_sql_medium_version_extraction.png)
 
 #### Database Name Disclosure
-![Database Name](../../screenshots/06_sql_medium_database_extraction.png)
+![Database Name](06_sql_medium_database_extraction.png)
 
 #### Database User Disclosure
-![DB User](../../screenshots/07_sql_medium_db_user_extraction.png)
+![DB User](07_sql_medium_db_user_extraction.png)
 
 ---
 
@@ -37,10 +37,10 @@ Session input was concatenated directly into a SQL query.
 
 ### Evidence
 #### Successful Boolean Bypass
-![High SQLi Bypass](../../screenshots/dvwa_sqli_high_bypass.png)
+![High SQLi Bypass](dvwa_sqli_high_bypass.png)
 
 #### Vulnerable Source Code
-![High SQLi Source](../../screenshots/dvwa_sqli_high_vulnerable_code.png)
+![High SQLi Source](dvwa_sqli_high_vulnerable_code.png)
 
 ---
 
@@ -52,13 +52,13 @@ Session input was concatenated directly into a SQL query.
 
 ### Evidence
 #### API v1 Password Exposure
-![API v1 Password Exposure](../../screenshots/api_v1_password_hash_exposure.png)
+![API v1 Password Exposure](.api_v1_password_hash_exposure.png)
 
 #### API v1 Unauthenticated Access (curl)
-![API curl Proof](../../screenshots/03_api_v1_password_exposed_curl_proof.png)
+![API curl Proof](03_api_v1_password_exposed_curl_proof.png)
 
 #### API v2 Improved Response
-![API v2 Secure](../../screenshots/api_v2_no_password_exposure.png)
+![API v2 Secure](api_v2_no_password_exposure.png)
 
 ---
 
@@ -69,7 +69,7 @@ Session identifiers appeared predictable/sequential.
 
 ### Evidence
 #### Sequential Session Cookie
-![Weak Session IDs](../../screenshots/weak_session_ids_sequential_cookie.png)
+![Weak Session IDs](weak_session_ids_sequential_cookie.png)
 
 ---
 

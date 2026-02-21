@@ -88,16 +88,16 @@ Broken access control enabled unauthorized privilege escalation and data modific
 ### Evidence
 
 #### Direct URL Access
-![Direct URL Access](../../screenshots/authorization_bypass_direct_url_access.png)
+![Direct URL Access](authorization_bypass_direct_url_access.png)
 
 #### API Data Exposure
-![API Data Exposure](../../screenshots/authorization_bypass_api_data_exposure.png)
+![API Data Exposure](authorization_bypass_api_data_exposure.png)
 
 #### Unauthorized Admin Update
-![Unauthorized Admin Update](../../screenshots/authorization_bypass_admin_update.png)
+![Unauthorized Admin Update](authorization_bypass_admin_update.png)
 
 #### IDOR / Direct Object Access
-![IDOR Direct Object Access](../../screenshots/idor_direct_object_access.png)
+![IDOR Direct Object Access](idor_direct_object_access.png)
 
 ---
 
@@ -120,22 +120,22 @@ LFI enabled arbitrary local file read and credential disclosure.
 ### Evidence
 
 #### /etc/passwd Disclosure
-![LFI /etc/passwd](../../screenshots/lfi_etc_passwd_success.png)
+![LFI /etc/passwd](lfi_etc_passwd_success.png)
 
 #### Apache Configuration Disclosure
-![LFI Apache Config](../../screenshots/lfi_apache_conf.png)
+![LFI Apache Config](lfi_apache_conf.png)
 
 #### /etc/issue Disclosure
-![LFI /etc/issue](../../screenshots/lfi_etc_issue.png)
+![LFI /etc/issue](lfi_etc_issue.png)
 
 #### /proc/version Disclosure
-![LFI /proc/version](../../screenshots/lfi_proc_version.png)
+![LFI /proc/version](lfi_proc_version.png)
 
 #### Config File Base64 Disclosure
-![LFI Config Base64](../../screenshots/lfi_config_base64_credentials.png)
+![LFI Config Base64](lfi_config_base64_credentials.png)
 
 #### Config File Decoded Credentials
-![LFI Config Decoded](../../screenshots/lfi_config_decoded_credentials.png)
+![LFI Config Decoded](lfi_config_decoded_credentials.png)
 
 ---
 
