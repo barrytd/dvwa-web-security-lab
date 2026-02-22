@@ -20,3 +20,6 @@ Compromised a Linux host via multiple attack paths, including vsftpd backdoor, S
 
 ### [2026-02-20 – Metasploitable 2 Manual RCE & Privilege Escalation](labs/2026-02-20-metasploitable-manual-rce-and-privesc/README.md)
 Manually exploited UnrealIRCd to obtain root access. Identified sudo misconfiguration allowing unrestricted privilege escalation. Extracted DVWA database credentials and accessed application user data via direct MySQL interaction.
+
+### [2026-02-21 – Basic Pentesting 1 WordPress Compromise & Local Privilege Escalation](labs/2026-02-21-basic-pentesting-1-wordpress-privesc/README.md)
+Compromised a WordPress 4.9 instance via weak administrative credentials. Achieved initial shell access as `www-data`, performed local enumeration, identified vulnerable `pkexec` SUID binary, and escalated privileges to root. Demonstrated full attack chain from web application exposure to system-level compromise.
