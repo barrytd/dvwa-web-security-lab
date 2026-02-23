@@ -1,8 +1,6 @@
 # Security Lab Portfolio
 
-Hands-on offensive security labs documenting full attack chains — from reconnaissance to root compromise.
-
-Each lab covers structured enumeration, exploit research, privilege escalation, and impact validation across vulnerable web applications and Linux systems.
+Penetration testing is hard to break into without experience, so I started building my own. Every lab here is something I worked through on my own by figuring it out, failing, and figuring it out again. This portfolio is my way of showing what I've learned and how far I've come.
 
 ## Labs
 
