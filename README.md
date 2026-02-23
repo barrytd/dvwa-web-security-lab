@@ -36,5 +36,5 @@ Compromised a WordPress 4.9 instance via weak administrative credentials. Achiev
 
 ---
 
-### [2026-02-22 – Kioptrix Level 2 Full Web-to-Kernel Exploit Chain](labs/2026-02-22-kioptrix-level-2-full-chain/README.md)
+### [2026-02-22 – Kioptrix Level 2 Full Web-to-Kernel Exploit Chain](labs/2026-02-22-kioptrix-level-1.1-web-to-root/README.md)
 Compromised a CentOS-based host through chained vulnerabilities including SQL authentication bypass, command injection, hardcoded credential discovery, database extraction, reverse shell access, and kernel-level privilege escalation via the `sock_sendpage()` local exploit. Demonstrated complete attack progression from web application flaw to root compromise.
