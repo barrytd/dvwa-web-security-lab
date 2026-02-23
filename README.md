@@ -4,8 +4,6 @@ Hands-on offensive security labs documenting full attack chains — from reconna
 
 Each lab covers structured enumeration, exploit research, privilege escalation, and impact validation across vulnerable web applications and Linux systems.
 
----
-
 ## Labs
 
 ### [Kioptrix Level 2 – Full Web-to-Kernel Exploit Chain](labs/2026-02-22-kioptrix-level-1.1-web-to-root/README.md)
@@ -43,7 +41,7 @@ Covered core OWASP Top 10 vulnerabilities including SQL injection, reflected and
 
 ---
 
-## Skills Demonstrated
+### Skills
 
 - Network Reconnaissance and Service Enumeration
 - Web Application Exploitation (SQLi, XSS, CSRF, LFI, Command Injection)
