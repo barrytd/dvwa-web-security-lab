@@ -2,117 +2,91 @@
 
 ## Overview
 
-This lab demonstrates full system compromise of a vulnerable Linux host (Metasploitable 2) through multiple independent attack vectors. The objective was to enumerate exposed services, exploit remote vulnerabilities, escalate privileges where required, and validate root-level impact.
+Full system compromise of a Metasploitable 2 host through multiple independent attack vectors — remote service exploitation, backdoored daemons, and local privilege escalation via SUID abuse.
 
-Target: 192.168.56.103  
-Attacker: Kali Linux  
-Environment: Isolated VirtualBox Lab  
+**Target:** 192.168.56.103 | **Attacker:** Kali Linux | **Environment:** VirtualBox Isolated Lab
 
----
+**Attack Paths:**
 
-## Enumeration
-
-Initial reconnaissance was performed using Nmap version detection to identify exposed services and potential attack vectors.
-
-![Nmap Enumeration](01_nmap_service_enumeration.png)
-
-Several legacy and vulnerable services were identified, including:
-
-- vsftpd 2.3.4
-- Samba (SMB)
-- Distcc
-- UnrealIRCd
-- MySQL, PostgreSQL, and Tomcat
-
-The exposed attack surface significantly increased the likelihood of remote compromise.
+vsftpd Backdoor → Root | Samba usermap_script → Root | Distcc RCE → SUID nmap → Root
 
 ---
 
-## Exploitation Path 1 – vsftpd 2.3.4 Backdoor
+## 1. Service Enumeration
 
-Vulnerability research confirmed that vsftpd 2.3.4 contains a known backdoor.
+Nmap version detection identified exposed services including vsftpd 2.3.4, Samba, Distcc, UnrealIRCd, MySQL, PostgreSQL, and Tomcat.
 
-![Searchsploit vsftpd](02_searchsploit_vsftpd_backdoor.png)
+<img src="01_nmap_service_enumeration.png" width="800">
 
-Triggering the backdoor resulted in immediate root-level shell access.
+---
 
-![vsftpd Root Shell](02_vsftpd_backdoor_root_shell.png)
+## 2. Exploitation Path 1 – vsftpd 2.3.4 Backdoor
+
+vsftpd 2.3.4 contains a known backdoor. Triggering it resulted in immediate root-level shell access with no authentication required.
+
+<img src="02_searchsploit_vsftpd_backdoor.png" width="800">
+
+<img src="02_vsftpd_backdoor_root_shell.png" width="800">
 
 **Impact:** Unauthenticated remote root access.
 
 ---
 
-## Exploitation Path 2 – Samba usermap_script RCE
+## 3. Exploitation Path 2 – Samba usermap_script RCE
 
-Anonymous SMB enumeration confirmed accessible Samba shares and version details.
+Anonymous SMB enumeration confirmed accessible shares and version details. The `usermap_script` vulnerability was exploited to gain a root shell.
 
-![Samba Enumeration](01_samba_version_discovery.png)
+<img src="01_samba_version_discovery.png" width="800">
 
-The Metasploit module `exploit/multi/samba/usermap_script` was used to exploit a command execution vulnerability.
-
-![Samba Root Shell](02_samba_usermap_root_shell.png)
+<img src="02_samba_usermap_root_shell.png" width="800">
 
 **Impact:** Remote code execution with root privileges.
 
 ---
 
-## Exploitation Path 3 – Distcc RCE → Privilege Escalation
+## 4. Exploitation Path 3 – Distcc RCE → SUID Privilege Escalation
 
-Distcc service was identified running on port 3632.
+Distcc was identified on port 3632. Exploitation returned a low-privileged shell as `daemon`.
 
-![Distcc Service](01_distcc_service_identified.png)
+<img src="01_distcc_service_identified.png" width="800">
 
-Using the Metasploit module `exploit/unix/misc/distcc_exec`, a reverse shell was obtained as the low-privileged user `daemon`.
+<img src="03_distcc_initial_shell.png" width="800">
 
-![Initial Shell](03_distcc_initial_shell.png)
+Local enumeration revealed `/usr/bin/nmap` configured with the SUID bit set.
 
-Although initial access was limited, local enumeration revealed a SUID misconfiguration.
+<img src="04_suid_discovery.png" width="800">
 
-![SUID Discovery](04_suid_discovery.png)
+Privilege escalation achieved via nmap interactive mode:
 
-The binary `/usr/bin/nmap` was configured with the SUID bit set. Using interactive mode:
-
+```bash
 nmap --interactive
 !sh
+```
 
-Root privileges were obtained.
+<img src="05_privilege_escalation_nmap.png" width="800">
 
-![Privilege Escalation](05_privilege_escalation_nmap.png)
-
-Root access was validated by reading sensitive system files and writing to `/root`.
-
-![Root Proof](06_root_proof.png)
+<img src="06_root_proof.png" width="800">
 
 **Impact:** Full system compromise via remote entry and local privilege escalation.
 
 ---
 
-## Summary of Findings
+## Findings Summary
 
-| Vector | Vulnerability Type | Result |
-|--------|-------------------|--------|
-| vsftpd 2.3.4 | Backdoored service | Root access |
-| Samba | Remote Code Execution | Root access |
-| Distcc | Unauthenticated RCE | Low-privilege shell |
-| SUID nmap | Local Privilege Escalation | Root access |
+| Vector | Vulnerability | Result |
+|--------|--------------|--------|
+| vsftpd 2.3.4 | Backdoored Service | Root Access |
+| Samba | usermap_script RCE | Root Access |
+| Distcc | Unauthenticated RCE | Low-Privilege Shell |
+| SUID nmap | Local Privilege Escalation | Root Access |
 
 ---
 
 ## Skills Demonstrated
 
-- Network reconnaissance and service fingerprinting
-- Vulnerability research and validation
-- Metasploit exploitation workflow
-- Reverse shell troubleshooting and payload selection
-- Local privilege escalation via SUID abuse
-- Post-exploitation validation and impact confirmation
-
----
-
-## Conclusion
-
-The target system was fully compromised through three independent exploitation paths. This lab demonstrates practical offensive security workflow:
-
-Enumeration → Exploitation → Privilege Escalation → Impact Validation
-
-The exercise highlights the risks associated with legacy services, exposed network daemons, and improper SUID configurations.
+- Network Reconnaissance and Service Fingerprinting
+- Vulnerability Research and Validation
+- Metasploit Exploitation Workflow
+- Reverse Shell Handling and Payload Selection
+- SUID Abuse and Local Privilege Escalation
+- Post-Exploitation Impact Validation

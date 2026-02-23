@@ -1,154 +1,131 @@
-# Lab Report — 2026-02-16 (Foundational Web Vulnerabilities)
+# DVWA – Foundational Web Vulnerabilities (Low Security)
 
-## Scope
+## Overview
 
-DVWA testing focused on foundational OWASP Top 10 vulnerabilities at Low security level, including injection, client-side attacks, access control failures, and file inclusion.
+Multi-vulnerability testing session against DVWA at Low security level covering core OWASP Top 10 categories including injection, client-side attacks, access control failures, and file inclusion.
 
----
+**Target:** DVWA (Local Lab) | **Stack:** Apache 2.4, PHP 8.4, MariaDB | **Security Level:** Low
 
-# Lab Environment
+**Vulnerabilities Covered:**
 
-- Apache 2.4 (Debian)
-- PHP 8.4
-- MariaDB / MySQL
-- DVWA hosted locally
-- Security level tested: Low
+SQL Injection → XSS (Reflected & Stored) → CSRF → Command Injection → Broken Access Control → Local File Inclusion
 
 ---
 
 ## 1. SQL Injection (Error-Based & Blind)
 
-### Techniques Demonstrated
-- Confirmed injectable parameter
-- Error-based SQL injection
-- Boolean-based blind SQL injection
-- Database structure enumeration
-
-### Key Learning
-Blind SQL injection relies on true/false logic instead of visible database errors.  
-Prepared statements are required to prevent injection vulnerabilities.
+Confirmed injectable parameter via error-based and boolean-based blind SQL injection. Database structure successfully enumerated. Blind injection relies on true/false logic rather than visible errors — prepared statements are required to prevent this class of vulnerability.
 
 ---
 
 ## 2. Cross-Site Scripting (XSS)
 
-### Reflected XSS
-- Injected client-side script via user input
-- Observed immediate execution in browser
+**Reflected XSS** — client-side script injected via user input and executed immediately in the browser.
 
-### Stored XSS
-- Injected persistent payload into database
-- Script executed automatically on page load
-
-### Key Learning
-Output encoding is critical.  
-Stored XSS can compromise authenticated user sessions.
+**Stored XSS** — persistent payload injected into the database and executed automatically on every page load. Stored XSS poses a higher risk as it can silently compromise authenticated user sessions without any further attacker interaction.
 
 ---
 
 ## 3. Cross-Site Request Forgery (CSRF)
 
-### Exploitation
-- Modified account password via forged request
-- Confirmed lack of CSRF token validation
-
-### Key Learning
-Authentication alone does not verify user intent.  
-CSRF tokens must be validated server-side.
+Account password modified via forged request. No CSRF token validation was enforced. Authentication alone does not verify user intent — tokens must be validated server-side on every state-changing request.
 
 ---
 
 ## 4. Command Injection
 
-### Exploitation
-- Injected OS-level commands via unsanitized input
-- Confirmed arbitrary command execution
-
-### Key Learning
-User input must never be passed directly to system commands.  
-Input validation must be combined with strict execution controls.
+OS-level commands injected via unsanitized input field. Arbitrary command execution confirmed. User input must never be passed directly to system commands regardless of perceived context.
 
 ---
 
 ## 5. Authorization Bypass (Broken Access Control)
 
-### Vulnerability
-Admin functionality was restricted only through UI controls.  
-No server-side authorization validation was enforced.
-
-### Exploitation
-- Logged in as non-admin user (`gordonb`)
-- Accessed admin-only endpoint directly
-- Retrieved full user list
-- Modified admin account information
-
-### Impact
-Broken access control enabled unauthorized privilege escalation and data modification.
-
-### Evidence
+Admin functionality was restricted through UI controls only with no server-side authorization enforcement. Logged in as non-admin user `gordonb` and accessed admin-only endpoints directly.
 
 #### Direct URL Access
-![Direct URL Access](authorization_bypass_direct_url_access.png)
+
+<img src="authorization_bypass_direct_url_access.png" width="800">
 
 #### API Data Exposure
-![API Data Exposure](authorization_bypass_api_data_exposure.png)
+
+<img src="authorization_bypass_api_data_exposure.png" width="800">
 
 #### Unauthorized Admin Update
-![Unauthorized Admin Update](authorization_bypass_admin_update.png)
 
-#### IDOR / Direct Object Access
-![IDOR Direct Object Access](idor_direct_object_access.png)
+<img src="authorization_bypass_admin_update.png" width="800">
+
+#### IDOR – Direct Object Access
+
+<img src="idor_direct_object_access.png" width="800">
+
+**Impact:** Unauthorized privilege escalation, full user list retrieval, and admin account modification.
 
 ---
 
 ## 6. Local File Inclusion (LFI)
 
-### Vulnerability
-User-controlled `page` parameter was directly included without validation.
-
-### Exploitation Steps
-- Performed directory traversal (`../`)
-- Accessed `/etc/passwd`
-- Retrieved Apache configuration files
-- Used `php://filter` wrapper
-- Extracted DVWA configuration file
-- Recovered database credentials
-
-### Impact
-LFI enabled arbitrary local file read and credential disclosure.
-
-### Evidence
+The user-controlled `page` parameter was included directly without validation. Directory traversal used to access system files, Apache configuration, and application source via the `php://filter` wrapper.
 
 #### /etc/passwd Disclosure
-![LFI /etc/passwd](lfi_etc_passwd_success.png)
+
+<img src="lfi_etc_passwd_success.png" width="800">
 
 #### Apache Configuration Disclosure
-![LFI Apache Config](lfi_apache_conf.png)
+
+<img src="lfi_apache_conf.png" width="800">
 
 #### /etc/issue Disclosure
-![LFI /etc/issue](lfi_etc_issue.png)
+
+<img src="lfi_etc_issue.png" width="800">
 
 #### /proc/version Disclosure
-![LFI /proc/version](lfi_proc_version.png)
 
-#### Config File Base64 Disclosure
-![LFI Config Base64](lfi_config_base64_credentials.png)
+<img src="lfi_proc_version.png" width="800">
 
-#### Config File Decoded Credentials
-![LFI Config Decoded](lfi_config_decoded_credentials.png)
+#### Config File Base64 Extraction
 
----
+<img src="lfi_config_base64_credentials.png" width="800">
 
-# Key Security Takeaways
+#### Decoded Database Credentials
 
-- Broken Access Control is often more critical than injection flaws.
-- UI restrictions do not enforce security — authorization must be server-side.
-- LFI combined with PHP stream wrappers can expose application source code.
-- Credential disclosure enables lateral movement.
-- Secure coding requires input validation, authorization enforcement, and output encoding.
+<img src="lfi_config_decoded_credentials.png" width="800">
+
+**Impact:** Arbitrary local file read and full database credential disclosure.
 
 ---
 
-# Disclaimer
+## Findings Summary
 
-All testing was performed in a controlled local lab environment for educational purposes only.
+| Vulnerability | Technique | Impact |
+|---------------|-----------|--------|
+| SQL Injection | Error-based & Blind | Database enumeration |
+| Reflected XSS | Script injection via input | Client-side execution |
+| Stored XSS | Persistent payload | Session compromise |
+| CSRF | Forged request | Unauthorized account modification |
+| Command Injection | Unsanitized OS input | Arbitrary command execution |
+| Broken Access Control | Direct URL & IDOR | Privilege escalation, data modification |
+| LFI | Directory traversal & php://filter | Credential disclosure, file read |
+
+---
+
+## Recommended Mitigations
+
+- Use parameterized queries for all SQL interactions
+- Encode all output to prevent XSS
+- Validate CSRF tokens server-side on every state-changing request
+- Never pass user input directly to system commands
+- Enforce authorization server-side — UI restrictions alone are not security controls
+- Validate and whitelist file inclusion parameters, disable dangerous PHP wrappers
+
+---
+
+## Skills Demonstrated
+
+- SQL Injection (Error-Based and Blind)
+- Cross-Site Scripting (Reflected and Stored)
+- CSRF Exploitation
+- OS Command Injection
+- Broken Access Control and IDOR
+- Local File Inclusion and Directory Traversal
+- PHP Stream Wrapper Abuse
+- Credential Extraction and Decoding

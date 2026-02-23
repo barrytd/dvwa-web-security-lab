@@ -1,6 +1,10 @@
 # Kioptrix Level 2 – Web to Root
 
-A full attack chain starting from network discovery and ending with root-level compromise via kernel exploitation.
+## Overview
+
+Full attack chain against a vulnerable CentOS host starting from network discovery and ending with root-level compromise via kernel exploitation.
+
+**Target:** 192.168.56.105 | **Environment:** VirtualBox Host-Only Network
 
 **Attack Path:**
 
@@ -18,15 +22,13 @@ Identified target using ARP scanning.
 
 ## 2. Service Enumeration
 
-Full TCP scan, service fingerprinting, and web technology identification.
+Full TCP scan, service fingerprinting, and web technology identification. Stack identified: Apache 2.0.52, PHP 4.3.9, MySQL, OpenSSH on CentOS.
 
 <img src="02_full_port_scan.png" width="800">
 
 <img src="03_service_enumeration.png" width="800">
 
 <img src="03_whatweb_identification.png" width="800">
-
-Stack identified: Apache 2.0.52, PHP 4.3.9, MySQL, OpenSSH on CentOS.
 
 ---
 
@@ -98,7 +100,7 @@ MySQL credentials found hardcoded in source. Database and user table enumerated 
 
 ## 9. Kernel Exploitation – Privilege Escalation
 
-Kernel version matched to a known RHEL 4 local privilege escalation via sock_sendpage(). Exploit transferred, compiled, and executed on target.
+Kernel version `2.6.9-55.EL` matched to a known RHEL 4 local privilege escalation via `sock_sendpage()`. Exploit transferred, compiled, and executed on target.
 
 <img src="16_searchsploit_kernel_match.png" width="800">
 
@@ -114,6 +116,18 @@ Kernel version matched to a known RHEL 4 local privilege escalation via sock_sen
 
 ---
 
+## Findings Summary
+
+| Phase | Technique | Result |
+|-------|-----------|--------|
+| Web Recon | Service & Stack Fingerprinting | Outdated Apache & PHP Identified |
+| Authentication | SQL Injection Bypass | Admin Access |
+| RCE | Command Injection | Remote Code Execution as apache |
+| Credential Access | Source Code Review | Hardcoded DB Credentials |
+| Privilege Escalation | Kernel Exploit (sock_sendpage) | Root Access |
+
+---
+
 ## Skills Demonstrated
 
 - Network Reconnaissance
@@ -122,6 +136,6 @@ Kernel version matched to a known RHEL 4 local privilege escalation via sock_sen
 - OS Command Injection
 - Source Code Analysis
 - Database Enumeration
-- Shell Stabilization
+- Reverse Shell Handling
 - Kernel Exploitation
 - Linux Privilege Escalation

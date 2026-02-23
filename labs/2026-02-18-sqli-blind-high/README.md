@@ -1,106 +1,86 @@
-# 2026-02-18 – SQL Injection (Blind) – High Security
+# DVWA – SQL Injection (Blind) – High Security
 
----
+## Overview
 
-## Objective
+Boolean-based blind SQL injection against DVWA at High security level, extracting the administrator password hash character by character using Burp Suite Intruder.
 
-Exploit a boolean-based blind SQL injection vulnerability in DVWA at High security level and extract the administrator password hash.
+**Target:** DVWA (Local Lab) | **Stack:** Apache 2.4, MySQL | **Attacker:** Kali Linux
 
----
+**Tools:** Burp Suite Intruder (Sniper Mode) | **Security Level:** High
 
-## Environment
+**Attack Path:**
 
-- DVWA (Local Lab)
-- Apache 2.4 (Debian)
-- MySQL
-- Kali Linux
-- Burp Suite (Intruder – Sniper Mode)
-- Security Level: High
+Injection Confirmation → Hash Length Extraction → Character-by-Character Blind Extraction → Hash Recovery → Verification
 
 ---
 
 ## Vulnerability Overview
 
-At High security level, the SQL Injection (Blind) module:
-
-- Accepts input via a cookie parameter
-- Does not return SQL query results
-- Requires inference of TRUE/FALSE conditions
-- Produces measurable response differences (HTTP status and content length)
-
-Although output is suppressed, the backend query remains injectable due to unsafe SQL construction without prepared statements.
+At High security level, the SQL Injection (Blind) module accepts input via a cookie parameter and suppresses query output entirely. Although no results are returned directly, the backend query remains injectable due to unsafe SQL construction without prepared statements. TRUE and FALSE conditions produce measurable differences in HTTP status and response length, making blind extraction possible.
 
 ---
 
-## Step 1 – Confirm Password Hash Length
+## 1. Confirm Password Hash Length
 
-The administrator password hash length was confirmed using:
+Hash length confirmed using a boolean condition:
 
 ```sql
 1' AND LENGTH((SELECT password FROM users WHERE user_id = 1)) = 32#
 ```
 
-Result confirmed the hash length is 32 characters (MD5).
+Result confirmed the hash is 32 characters — consistent with MD5.
 
 ---
 
-## Step 2 – Character-by-Character Extraction
+## 2. Character-by-Character Extraction
 
-Blind extraction was performed using:
+Blind extraction performed using:
 
 ```sql
 1' AND substr((SELECT password FROM users WHERE user_id=1),1,1)='5'-- -
 ```
 
-### Method
+Burp Intruder was configured in Sniper mode with a payload list of `0-9` and `a-f`, iterating one character position per attack. A TRUE condition was identified by:
 
-- Burp Intruder (Sniper mode)
-- Payload list: 0-9 and a-f
-- One character position per attack
-- TRUE condition identified via:
-  - HTTP 200 response
-  - Increased response length
-  - “User ID exists” indicator
-
----
-
-## Position 1 Extraction
-
-![Position 1 Extraction](01_sqli_blind_high_position_1_extraction.png)
-
-Only payload 5 produced:
-
-- HTTP 200
+- HTTP 200 response
 - Increased response length
-- TRUE condition confirmed
-
-Position 1 = 5
+- "User ID exists" indicator in the body
 
 ---
 
-## Position 2 Extraction
+## 3. Position 1 Extraction
 
-![Position 2 Extraction](02_sqli_blind_high_position_2_extraction.png)
+Only payload `5` produced a TRUE condition — HTTP 200 and increased response length.
 
-Only payload f produced:
+<img src="01_sqli_blind_high_position_1_extraction.png" width="800">
 
-- HTTP 200
-- Increased response length
-- TRUE condition confirmed
-
-Position 2 = f
+**Position 1 = 5**
 
 ---
 
-## ASCII-Based Boolean Extraction Confirmation
+## 4. Position 2 Extraction
 
-![ASCII Extraction Proof](blind_sqli_high_ascii_reference_proof.png)
+Only payload `f` produced a TRUE condition.
 
-Demonstrates ASCII comparison using `ORD()` and `MID()` during blind extraction.
+<img src="02_sqli_blind_high_position_2_extraction.png" width="800">
+
+**Position 2 = f**
 
 ---
 
-## Final Extracted Hash
+## 5. ASCII-Based Boolean Extraction Confirmation
+
+ASCII comparison using `ORD()` and `MID()` used to confirm extraction logic during blind enumeration.
+
+<img src="blind_sqli_high_ascii_reference_proof.png" width="800">
+
+---
+
+## 6. Full Hash Reconstruction
+
+<img src="dvwa_blind_sql_injection_high_password_hash_extraction.png" width="800">
+
+**Extracted Hash:**
 
 ```
 5f4dcc3b5aa765d61d8327deb882cf99
@@ -108,64 +88,62 @@ Demonstrates ASCII comparison using `ORD()` and `MID()` during blind extraction.
 
 ---
 
-## Full Hash Reconstruction Proof
-
-![Full Hash Extraction](dvwa_blind_sql_injection_high_password_hash_extraction.png)
-
----
-
-## Hash Verification
-
-Verified via:
+## 7. Hash Verification
 
 ```bash
 echo -n password | md5sum
 ```
 
-![MD5 Verification](03_sqli_blind_high_extracted_hash.png)
+<img src="03_sqli_blind_high_extracted_hash.png" width="800">
 
-The extracted hash matches the MD5 of "password".
-
-Administrator credentials successfully recovered.
+Extracted hash matches the MD5 of `password`. Administrator credentials successfully recovered.
 
 ---
 
-## Observed Mitigation Attempt (High Level)
+## 8. Observed Mitigation Attempt
 
-![Mitigation Attempt](sqli_blind_high_mitigation_int_casting_proof.png)
+High security attempts integer casting on input, but unsafe query construction still allows injection through the cookie parameter.
 
-High security attempts integer casting; however, unsafe query construction still allows injection.
+<img src="sqli_blind_high_mitigation_int_casting_proof.png" width="800">
 
 ---
 
-## Impact
+## Findings Summary
 
-An attacker can:
-
-- Extract password hashes
-- Perform offline password cracking
-- Fully compromise user accounts
-- Escalate privileges
-- Bypass authentication mechanisms
-
-Even at High security level, absence of prepared statements enables full credential extraction.
+| Phase | Technique | Result |
+|-------|-----------|--------|
+| Injection Confirmation | Boolean Condition Testing | Vulnerable Parameter Confirmed |
+| Hash Length | LENGTH() Boolean Query | 32 Characters (MD5) |
+| Character Extraction | substr() + Burp Intruder | Full Hash Recovered |
+| Hash Cracking | MD5 Verification | Password Identified |
+| Mitigation Review | Source Code Analysis | Integer Cast Bypass Confirmed |
 
 ---
 
 ## Recommended Mitigations
 
-- Use parameterized queries / prepared statements
-- Avoid string concatenation in SQL
+- Use parameterized queries and prepared statements
+- Avoid string concatenation in SQL construction
 - Implement modern password hashing (bcrypt / Argon2)
 - Enforce least-privilege database permissions
-- Validate and sanitize user-controlled input
+- Validate and sanitize all user-controlled input
 
 ---
 
 ## Key Takeaways
 
-- Blind SQL injection does not require visible query output
-- Response length differences can leak sensitive information
-- High security does not guarantee secure implementation
-- Burp Intruder can automate blind extraction efficiently
-- Repetitive extraction steps omitted for brevity
+- Blind SQL injection does not require visible query output to be effective
+- Response length differences alone can leak sensitive data
+- High security level does not guarantee secure implementation
+- Burp Intruder automates character-by-character extraction efficiently
+
+---
+
+## Skills Demonstrated
+
+- Blind SQL Injection (Boolean-Based)
+- Burp Suite Intruder (Sniper Mode)
+- Hash Extraction and Offline Verification
+- Cookie Parameter Manipulation
+- Security Control Bypass Analysis
+- Source Code Review
