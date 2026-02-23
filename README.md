@@ -1,7 +1,8 @@
 # Security Lab Portfolio
+
 Hands-on offensive security labs demonstrating full attack chains — from reconnaissance to root compromise.
 
----
+Each report documents structured enumeration, exploit research and adaptation, privilege escalation, and impact validation across vulnerable web applications and Linux systems.
 
 ## Lab Reports
 
