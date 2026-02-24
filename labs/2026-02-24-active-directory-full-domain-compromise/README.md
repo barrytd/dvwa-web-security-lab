@@ -2,7 +2,7 @@
 
 ## Overview
 
-Full Active Directory attack chain against a self-built lab environment. This lab covers AD environment setup, network enumeration, credential attacks, hash dumping, Pass-the-Hash, and domain compromise via SYSTEM shell on the domain controller.
+Full Active Directory attack chain against a self-built lab environment. This lab covers AD environment setup from scratch, network enumeration, credential attacks, hash dumping, Pass-the-Hash, and domain compromise via SYSTEM shell on the domain controller.
 
 **Attacker:** Kali Linux (192.168.56.102) | **Domain Controller:** DC01 (192.168.56.10) | **Client:** WIN11-Client (192.168.56.20)
 
@@ -16,16 +16,47 @@ Network Enumeration → SMB Enumeration → User Enumeration → Hash Dumping �
 
 ## Lab Setup
 
-Built a full Active Directory environment from scratch:
+### Windows Server 2022 Installation
 
-- Windows Server 2022 deployed and promoted to Domain Controller
-- Domain: lab.local created
-- Organizational Unit: Users_Lab
-- Users created: jsmith, jdoe, bjones
-- Security Group: IT_Staff with all three users
-- Windows 11 Enterprise client joined to domain
+<img src="01_server_install_complete.png" width="800">
 
-<img src="13_final_ad_proof.png" width="800">
+### Server Renamed to DC01
+
+<img src="02_server_renamed_DC01.png" width="800">
+
+### AD DS Role Installed
+
+<img src="03_AD_DS_role_installed.png" width="800">
+
+### Domain Controller Configured
+
+<img src="04_domain_controller_configured.png" width="800">
+
+### AD Users Created (jsmith, jdoe, bjones)
+
+<img src="06_ad_users_created.png" width="800">
+
+### IT_Staff Security Group Created
+
+<img src="07_ad_group_created.png" width="800">
+
+### Static IP Configured on DC01
+
+<img src="08a_static_ip_set.png" width="800">
+
+<img src="08b_dns_set.png" width="800">
+
+<img src="08_static_ip_configured.png" width="800">
+
+### Windows 11 Client Joined to Domain
+
+<img src="10_domain_join_success.png" width="800">
+
+<img src="11_win11_client_whoami.png" width="800">
+
+### WIN11-Client Verified in Active Directory
+
+<img src="12_client_joined_domain.png" width="800">
 
 ---
 
@@ -39,7 +70,7 @@ ARP scan identified all live hosts on the lab network.
 
 ## 2. Domain Controller Port Scan
 
-Full TCP scan with service detection and default scripts confirmed DC01 as the domain controller for lab.local.
+Full TCP scan with service detection confirmed DC01 as the domain controller for lab.local.
 
 <img src="02_dc01_nmap_scan.png" width="800">
 
@@ -158,6 +189,12 @@ krbtgt:502:aad3b435b51404eeaad3b435b51404ee:0dbf4b87c0bb3c0f514f9695d7593fb1:::
 
 ---
 
+## 11. Final AD Proof
+
+<img src="13_final_ad_proof.png" width="800">
+
+---
+
 ## Findings Summary
 
 | Phase | Technique | Result |
@@ -174,7 +211,7 @@ krbtgt:502:aad3b435b51404eeaad3b435b51404ee:0dbf4b87c0bb3c0f514f9695d7593fb1:::
 
 ## Recommended Mitigations
 
-- Enforce strong unique passwords across all accounts — weak passwords enable offline cracking
+- Enforce strong unique passwords across all accounts
 - Enable Protected Users security group to restrict credential caching
 - Implement Credential Guard to protect NTLM hashes in memory
 - Monitor for secretsdump and PSExec activity in Windows Event Logs
@@ -186,7 +223,7 @@ krbtgt:502:aad3b435b51404eeaad3b435b51404ee:0dbf4b87c0bb3c0f514f9695d7593fb1:::
 
 ## Skills Demonstrated
 
-- Active Directory Environment Setup
+- Active Directory Environment Setup and Configuration
 - Network Enumeration (nmap, netdiscover)
 - SMB Enumeration (CrackMapExec)
 - NTLM Hash Dumping (Impacket secretsdump)
