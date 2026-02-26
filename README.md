@@ -47,6 +47,8 @@ Covered core OWASP Top 10 vulnerabilities including SQL injection, reflected and
 ### Skills
 
 - Active Directory Enumeration and Exploitation
+- Kerberoasting and Kerberos Ticket Cracking
+- BloodHound Attack Path Mapping
 - Network Reconnaissance and Service Enumeration
 - Web Application Exploitation (SQLi, XSS, CSRF, LFI, Command Injection)
 - Authentication and Authorization Bypass
