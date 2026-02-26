@@ -10,7 +10,7 @@ Full Active Directory attack chain against a self-built lab environment. This la
 
 **Attack Path:**
 
-Network Enumeration → SMB Enumeration → User Enumeration → Hash Dumping → Hash Cracking → Pass-the-Hash → PSExec SYSTEM Shell → krbtgt Extraction
+Network Enumeration → SMB Enumeration → User Enumeration → Hash Dumping → Hash Cracking → Pass-the-Hash → PSExec SYSTEM Shell → krbtgt Extraction → Kerberoasting → BloodHound AD Mapping
 
 ---
 
@@ -195,6 +195,74 @@ krbtgt:502:aad3b435b51404eeaad3b435b51404ee:0dbf4b87c0bb3c0f514f9695d7593fb1:::
 
 ---
 
+## 12. Kerberoasting
+
+A service account called `sqlservice` was created with an SPN registered on `MSSQLSvc/DC01.lab.local:1433` to simulate a real SQL Server environment. Any account with an SPN registered is vulnerable to Kerberoasting — an attacker can request the Kerberos ticket for that service and crack it offline to recover the plaintext password.
+
+### SPN Registered on DC01
+
+```powershell
+setspn -a MSSQLSvc/DC01.lab.local:1433 lab\sqlservice
+```
+
+<img src="14_spn_registered.png" width="800">
+
+### Kerberos Ticket Requested from Kali
+
+```bash
+impacket-GetUserSPNs lab.local/Administrator:'Password123!' -dc-ip 192.168.56.10 -request -outputfile kerberoast_hash.txt
+```
+
+<img src="15_kerberoast_ticket.png" width="800">
+
+### Hash Cracked Offline
+
+```bash
+hashcat -m 13100 kerberoast_hash.txt custom_wordlist2.txt --force
+```
+
+<img src="16_kerberoast_cracked.png" width="800">
+
+**Result:** `$krb5tgs$23$*sqlservice$LAB.LOCAL$...:Summer2024`
+
+The service account password was recovered offline without ever interacting with the account directly. In a real environment service accounts often have elevated privileges making this a critical finding.
+
+---
+
+## 13. BloodHound AD Enumeration
+
+BloodHound maps Active Directory relationships and attack paths visually. Data was collected remotely from Kali using bloodhound-python without needing to run anything on the Windows machines.
+
+```bash
+bloodhound-python -u Administrator -p 'Password123!' -d lab.local -ns 192.168.56.10 -c All
+```
+
+### DC01 Object Information
+
+BloodHound identified DC01 as a Tier Zero asset with Unconstrained Delegation enabled — a critical misconfiguration in real environments that allows any authenticated user to impersonate any domain account including Domain Admins.
+
+<img src="17_bloodhound_dc01_object_info.png" width="800">
+
+### Attack Path from Administrator to DC01
+
+BloodHound mapped the full privilege path from `ADMINISTRATOR@LAB.LOCAL` to `DC01.LAB.LOCAL` through three separate group memberships — Domain Admins, Enterprise Admins, and Administrators — each with different permissions over the domain controller.
+
+<img src="18_bloodhound_attack_path.png" width="800">
+
+### Shortest Path to Domain Admins
+
+The Cypher query confirms `ADMINISTRATOR@LAB.LOCAL` is a direct member of `DOMAIN ADMINS@LAB.LOCAL` — a single hop to full domain control.
+
+<img src="19_bloodhound_shortest_path_domain_admins.png" width="800">
+
+### All Domain Users
+
+BloodHound enumerated all 9 accounts in the domain. KRBTGT and ADMINISTRATOR are both flagged as Tier Zero — the most critical accounts in the environment. SQLSERVICE is visible as the Kerberoastable service account.
+
+<img src="20_bloodhound_all_users.png" width="800">
+
+---
+
 ## Findings Summary
 
 | Phase | Technique | Result |
@@ -206,6 +274,8 @@ krbtgt:502:aad3b435b51404eeaad3b435b51404ee:0dbf4b87c0bb3c0f514f9695d7593fb1:::
 | Pass-the-Hash | CrackMapExec PTH | Admin access without plaintext password |
 | Remote Execution | Impacket PSExec | SYSTEM shell on domain controller |
 | Persistence Risk | krbtgt extraction | Golden Ticket attack possible |
+| Kerberoasting | GetUserSPNs + Hashcat | Service account password cracked offline |
+| AD Mapping | BloodHound CE | Full attack paths and Tier Zero assets mapped |
 
 ---
 
@@ -218,17 +288,22 @@ krbtgt:502:aad3b435b51404eeaad3b435b51404ee:0dbf4b87c0bb3c0f514f9695d7593fb1:::
 - Restrict SMB access and disable NTLM authentication where possible
 - Rotate krbtgt password twice to invalidate any existing Golden Tickets
 - Implement tiered administration model to limit lateral movement
+- Audit and remove unnecessary SPNs from privileged accounts
+- Use Managed Service Accounts (MSAs) instead of regular user accounts for services
+- Regularly review BloodHound attack paths to identify and remediate privilege escalation routes
 
 ---
 
 ## Skills Demonstrated
 
 - Active Directory Environment Setup and Configuration
-- Network Enumeration (nmap, netdiscover)
-- SMB Enumeration (CrackMapExec)
+- Network Enumeration (nmap, CrackMapExec)
+- SMB Enumeration and Share Analysis
 - NTLM Hash Dumping (Impacket secretsdump)
 - Offline Hash Cracking (Hashcat)
 - Pass-the-Hash Attack
 - Remote Code Execution (Impacket PSExec)
 - krbtgt Extraction and Golden Ticket Analysis
+- SPN Registration and Kerberoasting (Impacket GetUserSPNs)
+- BloodHound AD Enumeration and Attack Path Mapping
 - Active Directory Privilege Escalation
