@@ -62,6 +62,7 @@ Covered core OWASP Top 10 vulnerabilities including SQL injection, reflected and
 
 ### Medium
 
+- [I Roasted a Service Account and Walked Out with the Whole Domain: TryHackMe Attacktive Directory](https://medium.com/@r.perez3/i-roasted-a-service-account-and-walked-out-with-the-whole-domain-tryhackme-attacktive-directory-b7aaa05e1aea)
 - [Kerberoasting and BloodHound: Two Attacks That Show Why Active Directory Is Hard to Defend](https://medium.com/@r.perez3/kerberoasting-and-bloodhound-two-attacks-that-show-why-active-directory-is-hard-to-defend-b893e68104a5)
 - [From Zero to Domain Admin: Building and Attacking an Active Directory Lab](https://medium.com/@r.perez3/from-zero-to-domain-admin-building-and-attacking-an-active-directory-lab-8e1f95a8e205)
 - [From Web to Root: Exploiting Kioptrix Level 2](https://medium.com/@r.perez3/from-web-to-root-exploiting-kioptrix-level-2-walkthrough-b07ef5a14fb1)
