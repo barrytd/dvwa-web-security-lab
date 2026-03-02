@@ -4,6 +4,12 @@ Penetration testing is hard to break into without experience, so I started build
 
 ## Labs
 
+### [TryHackMe – Linux PrivEsc](labs/2026-03-01-linux-privesc-tryhackme/README.md)
+
+Worked through 18 Linux privilege escalation techniques against an intentionally vulnerable Debian VM. Covered MySQL UDF exploitation, world-writable /etc/shadow and /etc/passwd, sudo misconfigurations, cron job abuse, wildcard injection, SUID exploitation, bash function hijacking, insecure SSH keys, NFS misconfiguration, and Dirty COW kernel exploit (CVE-2016-5195).
+
+---
+
 ### [TryHackMe – VulnNet: Active](labs/2026-02-27-vulnnet-active-windows-privesc/README.md)
 
 Exploited unauthenticated Redis on a Windows domain controller to force NTLM authentication via Responder, cracked the captured Net-NTLMv2 hash offline, abused a writable SMB share containing a scheduled PowerShell script to obtain a reverse shell, and escalated to SYSTEM using GodPotato via SeImpersonatePrivilege.
@@ -91,5 +97,6 @@ Covered core OWASP Top 10 vulnerabilities including SQL injection, reflected and
 - Manual Exploitation (no Metasploit)
 - Kernel and SUID Privilege Escalation
 - SeImpersonatePrivilege Abuse and Token Impersonation
+- Linux Privilege Escalation (Cron, NFS, SUID, Wildcards, Dirty COW)
 - Post-Exploitation Credential Harvesting
 - API and Session Security Analysis
