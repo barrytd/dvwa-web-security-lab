@@ -4,6 +4,12 @@ Penetration testing is hard to break into without experience, so I started build
 
 ## Labs
 
+### [TryHackMe – Alfred](labs/2026-03-03-alfred-jenkins-rce-token-impersonation/README.md)
+
+Exploited a Jenkins CI/CD server exposed on port 8080 with default credentials to achieve remote code execution via the Windows batch command build step. Delivered a PowerShell reverse shell using Nishang, upgraded to Meterpreter, and escalated to NT AUTHORITY\SYSTEM through Windows token impersonation via SeImpersonatePrivilege using the Incognito module.
+
+---
+
 ### [TryHackMe – Linux PrivEsc](labs/2026-03-01-linux-privesc-tryhackme/README.md)
 
 Worked through 18 Linux privilege escalation techniques against an intentionally vulnerable Debian VM. Covered MySQL UDF exploitation, world-writable /etc/shadow and /etc/passwd, sudo misconfigurations, cron job abuse, wildcard injection, SUID exploitation, bash function hijacking, insecure SSH keys, NFS misconfiguration, and Dirty COW kernel exploit (CVE-2016-5195).
@@ -74,6 +80,7 @@ Covered core OWASP Top 10 vulnerabilities including SQL injection, reflected and
 
 ### Medium
 
+- [From Default Password to SYSTEM: A Beginner's Walkthrough of TryHackMe Alfred](https://medium.com/@r.perez3)
 - [18 Ways to Root a Linux Box: TryHackMe Linux PrivEsc Walkthrough](https://medium.com/@r.perez3/18-ways-to-root-a-linux-box-tryhackme-linux-privesc-walkthrough-68dd90e18b24)
 - [I Roasted a Service Account and Walked Out with the Whole Domain: TryHackMe Attacktive Directory](https://medium.com/@r.perez3/i-roasted-a-service-account-and-walked-out-with-the-whole-domain-tryhackme-attacktive-directory-b7aaa05e1aea)
 - [Kerberoasting and BloodHound: Two Attacks That Show Why Active Directory Is Hard to Defend](https://medium.com/@r.perez3/kerberoasting-and-bloodhound-two-attacks-that-show-why-active-directory-is-hard-to-defend-b893e68104a5)
@@ -98,6 +105,8 @@ Covered core OWASP Top 10 vulnerabilities including SQL injection, reflected and
 - Manual Exploitation (no Metasploit)
 - Kernel and SUID Privilege Escalation
 - SeImpersonatePrivilege Abuse and Token Impersonation
+- Windows Token Impersonation via Incognito Module
+- CI/CD Pipeline Exploitation (Jenkins)
 - Linux Privilege Escalation (Cron, NFS, SUID, Wildcards, Dirty COW)
 - Post-Exploitation Credential Harvesting
 - API and Session Security Analysis
