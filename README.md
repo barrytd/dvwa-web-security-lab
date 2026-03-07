@@ -4,6 +4,12 @@ Penetration testing is hard to break into without experience, so I started build
 
 ## Labs
 
+### [TryHackMe – Steel Mountain](labs/2026-03-06-steel-mountain-hfs-rce-unquoted-service-path/README.md)
+
+Exploited an unauthenticated remote code execution vulnerability in Rejetto HTTP File Server (HFS) 2.3 (CVE-2014-6287) to gain an initial foothold as a low-privilege user. Escalated to NT AUTHORITY\SYSTEM by abusing an unquoted service path in a third-party application with a writable directory and a restartable service. Completed the full attack chain twice: once with Metasploit and once entirely manually using ExploitDB, msfvenom, Python HTTP server, and netcat.
+
+---
+
 ### [TryHackMe – Alfred](labs/2026-03-03-alfred-jenkins-rce-token-impersonation/README.md)
 
 Exploited a Jenkins CI/CD server exposed on port 8080 with default credentials to achieve remote code execution via the Windows batch command build step. Delivered a PowerShell reverse shell using Nishang, upgraded to Meterpreter, and escalated to NT AUTHORITY\SYSTEM through Windows token impersonation via SeImpersonatePrivilege using the Incognito module.
@@ -80,6 +86,7 @@ Covered core OWASP Top 10 vulnerabilities including SQL injection, reflected and
 
 ### Medium
 
+- [Steel Mountain: Exploiting HFS and Escalating to SYSTEM on Windows](https://medium.com/@r.perez3/steel-mountain-exploiting-hfs-and-escalating-to-system-on-windows-11851e71e650)
 - [From Default Password to SYSTEM: A Beginner's Walkthrough of TryHackMe Alfred](https://medium.com/@r.perez3)
 - [18 Ways to Root a Linux Box: TryHackMe Linux PrivEsc Walkthrough](https://medium.com/@r.perez3/18-ways-to-root-a-linux-box-tryhackme-linux-privesc-walkthrough-68dd90e18b24)
 - [I Roasted a Service Account and Walked Out with the Whole Domain: TryHackMe Attacktive Directory](https://medium.com/@r.perez3/i-roasted-a-service-account-and-walked-out-with-the-whole-domain-tryhackme-attacktive-directory-b7aaa05e1aea)
@@ -106,6 +113,7 @@ Covered core OWASP Top 10 vulnerabilities including SQL injection, reflected and
 - Kernel and SUID Privilege Escalation
 - SeImpersonatePrivilege Abuse and Token Impersonation
 - Windows Token Impersonation via Incognito Module
+- Unquoted Service Path Privilege Escalation
 - CI/CD Pipeline Exploitation (Jenkins)
 - Linux Privilege Escalation (Cron, NFS, SUID, Wildcards, Dirty COW)
 - Post-Exploitation Credential Harvesting
