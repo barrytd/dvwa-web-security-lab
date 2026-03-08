@@ -1,4 +1,4 @@
-# Lab 13: Steel Mountain - HFS RCE + Unquoted Service Path Privilege Escalation
+# Steel Mountain - HFS RCE + Unquoted Service Path Privilege Escalation
 
 **Platform:** TryHackMe  
 **Difficulty:** Easy  
