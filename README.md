@@ -4,6 +4,12 @@ Penetration testing is hard to break into without experience, so I started build
 
 ## Labs
 
+### [TryHackMe – HackPark](labs/2026-03-07-hackpark-blogengine-rce-scheduledtask-privesc/README.md)
+
+Brute forced the admin login on a BlogEngine.NET site using Hydra against an ASP.NET form with expiring VIEWSTATE tokens. Exploited an authenticated file upload vulnerability (CVE-2019-6714) to achieve remote code execution as the IIS application pool account. Escalated to NT AUTHORITY\SYSTEM by identifying a misconfigured scheduled task running a binary from a world-writable directory and replacing it with a malicious payload. Completed the full attack chain twice: once with Metasploit and once entirely manually using winPEAS, msfvenom, and netcat.
+
+---
+
 ### [TryHackMe – Steel Mountain](labs/2026-03-06-steel-mountain-hfs-rce-unquoted-service-path/README.md)
 
 Exploited an unauthenticated remote code execution vulnerability in Rejetto HTTP File Server (HFS) 2.3 (CVE-2014-6287) to gain an initial foothold as a low-privilege user. Escalated to NT AUTHORITY\SYSTEM by abusing an unquoted service path in a third-party application with a writable directory and a restartable service. Completed the full attack chain twice: once with Metasploit and once entirely manually using ExploitDB, msfvenom, Python HTTP server, and netcat.
@@ -86,6 +92,7 @@ Covered core OWASP Top 10 vulnerabilities including SQL injection, reflected and
 
 ### Medium
 
+- [HackPark: Brute Forcing ASP.NET and Exploiting BlogEngine.NET to SYSTEM](https://medium.com/@r.perez3)
 - [Steel Mountain: Exploiting HFS and Escalating to SYSTEM on Windows](https://medium.com/@r.perez3/steel-mountain-exploiting-hfs-and-escalating-to-system-on-windows-11851e71e650)
 - [From Default Password to SYSTEM: A Beginner's Walkthrough of TryHackMe Alfred](https://medium.com/@r.perez3)
 - [18 Ways to Root a Linux Box: TryHackMe Linux PrivEsc Walkthrough](https://medium.com/@r.perez3/18-ways-to-root-a-linux-box-tryhackme-linux-privesc-walkthrough-68dd90e18b24)
@@ -106,6 +113,7 @@ Covered core OWASP Top 10 vulnerabilities including SQL injection, reflected and
 - Network Reconnaissance and Service Enumeration
 - Web Application Exploitation (SQLi, XSS, CSRF, LFI, Command Injection)
 - Authentication and Authorization Bypass
+- Web Login Brute Forcing (Hydra, Burp Suite Intruder)
 - NTLM Hash Dumping and Offline Cracking
 - Pass-the-Hash and Lateral Movement
 - Reverse Shell Handling and Shell Stabilization
@@ -114,6 +122,7 @@ Covered core OWASP Top 10 vulnerabilities including SQL injection, reflected and
 - SeImpersonatePrivilege Abuse and Token Impersonation
 - Windows Token Impersonation via Incognito Module
 - Unquoted Service Path Privilege Escalation
+- Scheduled Task Binary Replacement
 - CI/CD Pipeline Exploitation (Jenkins)
 - Linux Privilege Escalation (Cron, NFS, SUID, Wildcards, Dirty COW)
 - Post-Exploitation Credential Harvesting
