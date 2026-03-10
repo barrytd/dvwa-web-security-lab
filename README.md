@@ -4,6 +4,12 @@ Penetration testing is hard to break into without experience, so I started build
 
 ## Labs
 
+### [TryHackMe – Investigating with Splunk](labs/2026-03-10-investigating-with-splunk-c2-backdoor-detection/README.md)
+
+Investigated a multi-host Windows compromise as a SOC analyst using Splunk SPL queries against pre-ingested Windows event and Sysmon logs. Identified a backdoor account created via remote WMI execution designed to impersonate a legitimate user, traced the attack to a specific host, and decoded a double-encoded PowerShell Empire C2 beacon to extract the full command-and-control URL. Defanged indicators of compromise for safe reporting using CyberChef.
+
+---
+
 ### [TryHackMe – HackPark](labs/2026-03-07-hackpark-blogengine-rce-scheduledtask-privesc/README.md)
 
 Brute forced the admin login on a BlogEngine.NET site using Hydra against an ASP.NET form with expiring VIEWSTATE tokens. Exploited an authenticated file upload vulnerability (CVE-2019-6714) to achieve remote code execution as the IIS application pool account. Escalated to NT AUTHORITY\SYSTEM by identifying a misconfigured scheduled task running a binary from a world-writable directory and replacing it with a malicious payload. Completed the full attack chain twice: once with Metasploit and once entirely manually using winPEAS, msfvenom, and netcat.
@@ -92,6 +98,7 @@ Covered core OWASP Top 10 vulnerabilities including SQL injection, reflected and
 
 ### Medium
 
+- [Investigating with Splunk: Hunting a C2 Backdoor Through Windows Event Logs](https://medium.com/@r.perez3)
 - [HackPark: Brute Forcing ASP.NET and Exploiting BlogEngine.NET to SYSTEM](https://medium.com/@r.perez3)
 - [Steel Mountain: Exploiting HFS and Escalating to SYSTEM on Windows](https://medium.com/@r.perez3/steel-mountain-exploiting-hfs-and-escalating-to-system-on-windows-11851e71e650)
 - [From Default Password to SYSTEM: A Beginner's Walkthrough of TryHackMe Alfred](https://medium.com/@r.perez3)
@@ -127,3 +134,7 @@ Covered core OWASP Top 10 vulnerabilities including SQL injection, reflected and
 - Linux Privilege Escalation (Cron, NFS, SUID, Wildcards, Dirty COW)
 - Post-Exploitation Credential Harvesting
 - API and Session Security Analysis
+- SIEM Log Analysis and Threat Hunting (Splunk)
+- Indicator of Compromise Extraction and Defanging
+- Encoded PowerShell Analysis and Base64 Decoding
+- Windows Event Log and Sysmon Investigation
