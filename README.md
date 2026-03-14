@@ -4,6 +4,12 @@ Penetration testing is hard to break into without experience, so I started build
 
 ## Labs
 
+### [TryHackMe – Benign](labs/2026-03-14-benign-lolbin-certutil-process-investigation/README.md)
+
+Investigated a compromised HR department host using only Windows process creation logs (EventID 4688) ingested into Splunk. Identified an imposter account using character substitution to impersonate a legitimate user, traced scheduled task abuse for persistence, and uncovered a LOLBIN-based payload download using certutil.exe to pull a malicious executable from a third-party file sharing site.
+
+---
+
 ### [TryHackMe – Investigating with Splunk](labs/2026-03-10-investigating-with-splunk-c2-backdoor-detection/README.md)
 
 Investigated a multi-host Windows compromise as a SOC analyst using Splunk SPL queries against pre-ingested Windows event and Sysmon logs. Identified a backdoor account created via remote WMI execution designed to impersonate a legitimate user, traced the attack to a specific host, and decoded a double-encoded PowerShell Empire C2 beacon to extract the full command-and-control URL. Defanged indicators of compromise for safe reporting using CyberChef.
@@ -98,6 +104,7 @@ Covered core OWASP Top 10 vulnerabilities including SQL injection, reflected and
 
 ### Medium
 
+- [Benign: Hunting a LOLBIN Attack Through Windows Process Logs](https://medium.com/@r.perez3)
 - [Investigating with Splunk: Hunting a C2 Backdoor Through Windows Event Logs](https://medium.com/@r.perez3)
 - [HackPark: Brute Forcing ASP.NET and Exploiting BlogEngine.NET to SYSTEM](https://medium.com/@r.perez3)
 - [Steel Mountain: Exploiting HFS and Escalating to SYSTEM on Windows](https://medium.com/@r.perez3/steel-mountain-exploiting-hfs-and-escalating-to-system-on-windows-11851e71e650)
@@ -114,27 +121,39 @@ Covered core OWASP Top 10 vulnerabilities including SQL injection, reflected and
 
 ## Skills
 
-- Active Directory Enumeration and Exploitation
-- Kerberoasting, ASREPRoasting, and Kerberos Ticket Cracking
-- BloodHound Attack Path Mapping
+**Offensive Security**
 - Network Reconnaissance and Service Enumeration
 - Web Application Exploitation (SQLi, XSS, CSRF, LFI, Command Injection)
 - Authentication and Authorization Bypass
 - Web Login Brute Forcing (Hydra, Burp Suite Intruder)
-- NTLM Hash Dumping and Offline Cracking
-- Pass-the-Hash and Lateral Movement
-- Reverse Shell Handling and Shell Stabilization
-- Manual Exploitation (no Metasploit)
-- Kernel and SUID Privilege Escalation
-- SeImpersonatePrivilege Abuse and Token Impersonation
-- Windows Token Impersonation via Incognito Module
-- Unquoted Service Path Privilege Escalation
-- Scheduled Task Binary Replacement
+- Manual Exploitation without Metasploit
 - CI/CD Pipeline Exploitation (Jenkins)
-- Linux Privilege Escalation (Cron, NFS, SUID, Wildcards, Dirty COW)
 - Post-Exploitation Credential Harvesting
-- API and Session Security Analysis
-- SIEM Log Analysis and Threat Hunting (Splunk)
-- Indicator of Compromise Extraction and Defanging
-- Encoded PowerShell Analysis and Base64 Decoding
+
+**Privilege Escalation**
+- Windows Token Impersonation and SeImpersonatePrivilege Abuse
+- Unquoted Service Path Exploitation
+- Scheduled Task Binary Replacement
+- LOLBIN Abuse (certutil, WMIC)
+- Kernel and SUID Privilege Escalation
+- Linux Privilege Escalation (Cron, NFS, SUID, Wildcards, Dirty COW)
+
+**Active Directory**
+- Active Directory Enumeration and Exploitation
+- Kerberoasting, ASREPRoasting, and Kerberos Ticket Cracking
+- BloodHound Attack Path Mapping
+- NTLM Hash Dumping, Cracking, and Pass-the-Hash
+- Lateral Movement and Domain Compromise
+
+**Blue Team and Threat Hunting**
+- SIEM Log Analysis and Threat Hunting (Splunk SPL)
 - Windows Event Log and Sysmon Investigation
+- Encoded PowerShell Analysis and Base64 Decoding
+- Indicator of Compromise Extraction and Defanging
+- Process Creation Log Analysis (EventID 4688)
+- Imposter Account Detection and User Behavior Analysis
+
+**Tools and Techniques**
+- Reverse Shell Handling and Shell Stabilization
+- Payload Generation and Delivery (msfvenom, Python HTTP server)
+- API and Session Security Analysis
