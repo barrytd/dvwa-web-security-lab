@@ -104,9 +104,9 @@ Covered core OWASP Top 10 vulnerabilities including SQL injection, reflected and
 
 ### Medium
 
-- [Benign: Hunting a LOLBIN Attack Through Windows Process Logs](https://medium.com/@r.perez3)
-- [Investigating with Splunk: Hunting a C2 Backdoor Through Windows Event Logs](https://medium.com/@r.perez3)
-- [HackPark: Brute Forcing ASP.NET and Exploiting BlogEngine.NET to SYSTEM](https://medium.com/@r.perez3)
+- [What a Fake Username and a Borrowed Windows Tool Taught Me About Defending Networks](https://medium.com/@r.perez3/what-a-fake-username-and-a-borrowed-windows-tool-taught-me-about-defending-networks-0b73f190ea8f?postPublishedType=initial)
+- [I Switched Sides: What It’s Like Investigating an Attack Instead of Running One](https://medium.com/@r.perez3/i-switched-sides-what-its-like-investigating-an-attack-instead-of-running-one-3afa29c1f556)
+- [HackPark: Brute Forcing BlogEngine.NET and Escalating to SYSTEM via Scheduled Task](https://medium.com/@r.perez3/hackpark-brute-forcing-blogengine-net-and-escalating-to-system-via-scheduled-task-d1e7473e4e01)
 - [Steel Mountain: Exploiting HFS and Escalating to SYSTEM on Windows](https://medium.com/@r.perez3/steel-mountain-exploiting-hfs-and-escalating-to-system-on-windows-11851e71e650)
 - [From Default Password to SYSTEM: A Beginner's Walkthrough of TryHackMe Alfred](https://medium.com/@r.perez3)
 - [18 Ways to Root a Linux Box: TryHackMe Linux PrivEsc Walkthrough](https://medium.com/@r.perez3/18-ways-to-root-a-linux-box-tryhackme-linux-privesc-walkthrough-68dd90e18b24)
@@ -156,4 +156,4 @@ Covered core OWASP Top 10 vulnerabilities including SQL injection, reflected and
 **Tools and Techniques**
 - Reverse Shell Handling and Shell Stabilization
 - Payload Generation and Delivery (msfvenom, Python HTTP server)
-- API and Session Security Analysis
+- API and Session Security AnalysisP
