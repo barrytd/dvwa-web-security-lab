@@ -4,6 +4,12 @@ Penetration testing is hard to break into without experience, so I started build
 
 ## Labs
 
+### [TryHackMe – SOC Simulator: Phishing Analysis](labs/2026-03-25-tryhackme-soc-simulator-phishing-analysis/README.md)
+
+Triaged five phishing alerts in the TryHackMe SOC Simulator using Splunk to pivot between email and firewall logs. Identified two false positives by corroborating sender domains against internal communications, and three true positives involving typosquatting against Microsoft and Amazon, a credential harvesting page, and a blacklisted bit.ly URL clicked by an employee. Documented findings, escalation decisions, and remediation recommendations for each alert. Completed with 260 points and first place.
+
+---
+
 ### [TryHackMe – Benign](labs/2026-03-14-benign-lolbin-certutil-process-investigation/README.md)
 
 Investigated a compromised HR department host using only Windows process creation logs (EventID 4688) ingested into Splunk. Identified an imposter account using character substitution to impersonate a legitimate user, traced scheduled task abuse for persistence, and uncovered a LOLBIN-based payload download using certutil.exe to pull a malicious executable from a third-party file sharing site.
@@ -104,8 +110,9 @@ Covered core OWASP Top 10 vulnerabilities including SQL injection, reflected and
 
 ### Medium
 
+- [SOC Simulator: Triaging Phishing Alerts with Splunk](https://medium.com/@r.perez3)
 - [What a Fake Username and a Borrowed Windows Tool Taught Me About Defending Networks](https://medium.com/@r.perez3/what-a-fake-username-and-a-borrowed-windows-tool-taught-me-about-defending-networks-0b73f190ea8f?postPublishedType=initial)
-- [I Switched Sides: What It’s Like Investigating an Attack Instead of Running One](https://medium.com/@r.perez3/i-switched-sides-what-its-like-investigating-an-attack-instead-of-running-one-3afa29c1f556)
+- [I Switched Sides: What It's Like Investigating an Attack Instead of Running One](https://medium.com/@r.perez3/i-switched-sides-what-its-like-investigating-an-attack-instead-of-running-one-3afa29c1f556)
 - [HackPark: Brute Forcing BlogEngine.NET and Escalating to SYSTEM via Scheduled Task](https://medium.com/@r.perez3/hackpark-brute-forcing-blogengine-net-and-escalating-to-system-via-scheduled-task-d1e7473e4e01)
 - [Steel Mountain: Exploiting HFS and Escalating to SYSTEM on Windows](https://medium.com/@r.perez3/steel-mountain-exploiting-hfs-and-escalating-to-system-on-windows-11851e71e650)
 - [From Default Password to SYSTEM: A Beginner's Walkthrough of TryHackMe Alfred](https://medium.com/@r.perez3)
@@ -147,6 +154,9 @@ Covered core OWASP Top 10 vulnerabilities including SQL injection, reflected and
 
 **Blue Team and Threat Hunting**
 - SIEM Log Analysis and Threat Hunting (Splunk SPL)
+- Phishing Alert Triage and SOC Investigation
+- Email Header and Sender Domain Analysis
+- Typosquatting and Lookalike Domain Detection
 - Windows Event Log and Sysmon Investigation
 - Encoded PowerShell Analysis and Base64 Decoding
 - Indicator of Compromise Extraction and Defanging
@@ -156,4 +166,4 @@ Covered core OWASP Top 10 vulnerabilities including SQL injection, reflected and
 **Tools and Techniques**
 - Reverse Shell Handling and Shell Stabilization
 - Payload Generation and Delivery (msfvenom, Python HTTP server)
-- API and Session Security AnalysisP
+- API and Session Security Analysis
