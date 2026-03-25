@@ -110,7 +110,7 @@ Covered core OWASP Top 10 vulnerabilities including SQL injection, reflected and
 
 ### Medium
 
-- [SOC Simulator: Triaging Phishing Alerts with Splunk](https://medium.com/@r.perez3)
+- [SOC Simulator: Triaging Phishing Alerts with Splunk](https://medium.com/@r.perez3/what-triaging-five-phishing-alerts-taught-me-about-thinking-like-a-soc-analyst-c08917f2b06a)
 - [What a Fake Username and a Borrowed Windows Tool Taught Me About Defending Networks](https://medium.com/@r.perez3/what-a-fake-username-and-a-borrowed-windows-tool-taught-me-about-defending-networks-0b73f190ea8f?postPublishedType=initial)
 - [I Switched Sides: What It's Like Investigating an Attack Instead of Running One](https://medium.com/@r.perez3/i-switched-sides-what-its-like-investigating-an-attack-instead-of-running-one-3afa29c1f556)
 - [HackPark: Brute Forcing BlogEngine.NET and Escalating to SYSTEM via Scheduled Task](https://medium.com/@r.perez3/hackpark-brute-forcing-blogengine-net-and-escalating-to-system-via-scheduled-task-d1e7473e4e01)
