@@ -4,6 +4,18 @@ Penetration testing is hard to break into without experience, so I started build
 
 ## Labs
 
+### [TryHackMe – Nmap Live Host Discovery](labs/2026-04-14-tryhackme-nmap-live-host-discovery/README.md)
+
+Worked through Nmap's host discovery stage before port scanning, covering ARP sweeps on local subnets (`-PR`), ICMP Echo/Timestamp/Address Mask probes for cross-subnet targets (`-PE`, `-PP`, `-PM`), and TCP SYN/ACK and UDP ping scans for when ICMP is blocked (`-PS`, `-PA`, `-PU`). Used the in-room network simulator to observe why ARP cannot cross routers and how ARP resolution precedes every local ICMP ping, then confirmed target enumeration behavior on the AttackBox by expanding `10.10.12.13/29` into its 8 host IPs with `nmap -sL -n`.
+
+---
+
+### [TryHackMe – Introduction to SIEM](labs/2026-04-14-tryhackme-intro-to-siem/README.md)
+
+Worked through the fundamentals of SIEM: host-centric vs network-centric log sources, centralized ingestion and normalization, correlation, and detection rule design over normalized fields like EventID and ProcessName. Completed the hands-on lab by triaging a cryptominer alert — identified `cudominer.exe` executing from a user temp directory on an HR workstation, traced it back to the EventID 4688 rule matching on `*miner*`, and correctly actioned it as a true positive for host isolation.
+
+---
+
 ### [TryHackMe – SOC Simulator: Phishing Analysis](labs/2026-03-25-tryhackme-soc-simulator-phishing-analysis/README.md)
 
 Triaged five phishing alerts in the TryHackMe SOC Simulator using Splunk to pivot between email and firewall logs. Identified two false positives by corroborating sender domains against internal communications, and three true positives involving typosquatting against Microsoft and Amazon, a credential harvesting page, and a blacklisted bit.ly URL clicked by an employee. Documented findings, escalation decisions, and remediation recommendations for each alert. Completed with 260 points and first place.
@@ -110,6 +122,8 @@ Covered core OWASP Top 10 vulnerabilities including SQL injection, reflected and
 
 ### Medium
 
+- [TryHackMe – Nmap Live Host Discovery](https://medium.com/@r.perez3/tryhackme-nmap-live-host-discovery-5bbe1a32cb5b)
+- [TryHackMe – Introduction to SIEM](https://medium.com/@r.perez3/tryhackme-introduction-to-siem-150fa97b8fc8)
 - [SOC Simulator: Triaging Phishing Alerts with Splunk](https://medium.com/@r.perez3/what-triaging-five-phishing-alerts-taught-me-about-thinking-like-a-soc-analyst-c08917f2b06a)
 - [What a Fake Username and a Borrowed Windows Tool Taught Me About Defending Networks](https://medium.com/@r.perez3/what-a-fake-username-and-a-borrowed-windows-tool-taught-me-about-defending-networks-0b73f190ea8f?postPublishedType=initial)
 - [I Switched Sides: What It's Like Investigating an Attack Instead of Running One](https://medium.com/@r.perez3/i-switched-sides-what-its-like-investigating-an-attack-instead-of-running-one-3afa29c1f556)
@@ -130,6 +144,8 @@ Covered core OWASP Top 10 vulnerabilities including SQL injection, reflected and
 
 **Offensive Security**
 - Network Reconnaissance and Service Enumeration
+- Host Discovery Techniques (ARP, ICMP Echo/Timestamp/Address Mask, TCP SYN/ACK, UDP)
+- Nmap Target Specification and Scan Tuning
 - Web Application Exploitation (SQLi, XSS, CSRF, LFI, Command Injection)
 - Authentication and Authorization Bypass
 - Web Login Brute Forcing (Hydra, Burp Suite Intruder)
@@ -154,6 +170,9 @@ Covered core OWASP Top 10 vulnerabilities including SQL injection, reflected and
 
 **Blue Team and Threat Hunting**
 - SIEM Log Analysis and Threat Hunting (Splunk SPL)
+- SIEM Fundamentals (Log Sources, Normalization, Correlation, Ingestion Methods)
+- Detection Rule Design, Triage, and Tuning
+- Cryptominer and Unauthorized Process Detection
 - Phishing Alert Triage and SOC Investigation
 - Email Header and Sender Domain Analysis
 - Typosquatting and Lookalike Domain Detection
