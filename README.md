@@ -4,6 +4,12 @@ Penetration testing is hard to break into without experience, so I started build
 
 ## Labs
 
+### [TryHackMe – Net Sec Challenge](labs/2026-04-15-tryhackme-net-sec-challenge/README.md)
+
+Completed the Network Security module capstone using only Nmap, Telnet, and Hydra. Enumerated six open TCP ports including an FTP server on nonstandard port 10021, extracted flags from HTTP and SSH server banners, brute forced FTP credentials with Hydra against rockyou, and performed a covert Nmap scan that achieved 0% IDS detection to capture the final flag.
+
+---
+
 ### [TryHackMe – Nmap Live Host Discovery](labs/2026-04-14-tryhackme-nmap-live-host-discovery/README.md)
 
 Worked through Nmap's host discovery stage before port scanning, covering ARP sweeps on local subnets (`-PR`), ICMP Echo/Timestamp/Address Mask probes for cross-subnet targets (`-PE`, `-PP`, `-PM`), and TCP SYN/ACK and UDP ping scans for when ICMP is blocked (`-PS`, `-PA`, `-PU`). Used the in-room network simulator to observe why ARP cannot cross routers and how ARP resolution precedes every local ICMP ping, then confirmed target enumeration behavior on the AttackBox by expanding `10.10.12.13/29` into its 8 host IPs with `nmap -sL -n`.
