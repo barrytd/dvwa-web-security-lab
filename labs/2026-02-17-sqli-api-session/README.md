@@ -2,13 +2,9 @@
 
 ## Overview
 
-Multi-vector testing session against DVWA covering SQL injection at Medium and High security levels, API endpoint security comparison, and weak session management analysis.
+Multi-vector assessment of DVWA from Kali Linux chaining UNION-based SQLi at Medium level, session-cookie SQLi at High level, unauthenticated API v1 credential exposure enumerated with `curl`, and predictable session ID analysis to extract database metadata, bypass authentication, and confirm password hash disclosure.
 
-**Target:** DVWA (Local Lab) | **Stack:** Apache 2.4, MySQL | **Attacker:** Kali Linux
-
-**Attack Path:**
-
-SQLi Medium (UNION) → SQLi High (Session-Based) → API v1 Credential Exposure → Weak Session ID Analysis
+**Target:** `DVWA (Local Lab)` (Apache 2.4, MySQL — attacker Kali Linux)
 
 ---
 

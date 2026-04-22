@@ -2,15 +2,9 @@
 
 ## Overview
 
-Boolean-based blind SQL injection against DVWA at High security level, extracting the administrator password hash character by character using Burp Suite Intruder.
+Boolean-based blind SQL injection against DVWA at High security level through an injectable cookie parameter, using `Burp Suite Intruder` in Sniper mode to extract the 32-character admin MD5 password hash one character at a time and cracking it offline with `md5sum` to recover the cleartext administrator password.
 
-**Target:** DVWA (Local Lab) | **Stack:** Apache 2.4, MySQL | **Attacker:** Kali Linux
-
-**Tools:** Burp Suite Intruder (Sniper Mode) | **Security Level:** High
-
-**Attack Path:**
-
-Injection Confirmation → Hash Length Extraction → Character-by-Character Blind Extraction → Hash Recovery → Verification
+**Target:** `DVWA (Local Lab)` (Apache 2.4, MySQL — Security Level: High, attacker Kali Linux)
 
 ---
 

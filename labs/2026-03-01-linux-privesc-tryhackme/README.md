@@ -2,7 +2,7 @@
 
 ## Overview
 
-Full walkthrough of the TryHackMe Linux PrivEsc room by Tib3rius. This room covers a wide range of Linux privilege escalation techniques against an intentionally vulnerable Debian VM. Each technique demonstrates a real-world misconfiguration that can lead to root access.
+Full walkthrough of the TryHackMe Linux PrivEsc room against a Debian VM, chaining 18 distinct root-level privilege escalation techniques including MySQL UDF abuse, shadow/passwd file tampering, sudo and LD_PRELOAD misconfigurations, cron writable scripts and wildcard injection, SUID binary exploitation, bash function/PS4 hijacking, insecure SSH keys, NFS no_root_squash abuse, and the Dirty COW kernel exploit (CVE-2016-5195) to obtain root.
 
 **Platform:** TryHackMe | **Room:** Linux PrivEsc | **Difficulty:** Easy-Medium
 

@@ -9,21 +9,9 @@
 
 ## Overview
 
-Introduction to SIEM is a SOC Level 1 room covering the fundamentals of Security Information and Event Management: host-centric vs network-centric log sources, the limitations of analyzing isolated logs, centralized collection and normalization, log ingestion methods, correlation, and how detection rules drive real-time alerting. The hands-on portion simulates a SOC analyst workflow in a static SIEM dashboard where a suspicious process triggers an alert, the analyst pivots into the underlying event, inspects the rule logic, and decides whether to escalate.
+Working through a static SIEM dashboard simulation, this SOC Level 1 room triages a `Potential CryptoMiner Activity` alert on a `WindowsEventLogs` EventID 4688 process-creation record, pivots to the raw event showing user `Chris` executing `C:\Users\Chris\temp\cudominer.exe` on `HR_02`, inspects the wildcard detection rule (`*miner*` OR `*crypt*`), and escalates as a true positive with host isolation based on the known cryptominer name, user-writable execution path, and HR host role.
 
----
-
-## Target Information
-
-| Field | Value |
-|---|---|
-| Platform | TryHackMe SOC Level 1 Path |
-| Module | Core SOC Solutions |
-| Log Source | WindowsEventLogs |
-| Event ID | 4688 (Process Creation) |
-| Infected Host | HR_02 |
-| Compromised User | Chris |
-| Malicious Process | cudominer.exe |
+**Target:** `HR_02` (Windows HR workstation, user `Chris` executing `cudominer.exe`)
 
 ---
 
@@ -38,19 +26,11 @@ Introduction to SIEM is a SOC Level 1 room covering the fundamentals of Security
 
 ---
 
-## Tools Used
-
-- Simulated SIEM dashboard (TryHackMe static lab)
-- Detection rule review
-- Windows Event Log (EventID 4688) analysis
-
----
-
 ## Investigation
 
 ### Phase 1: Alert Triggered on Suspicious Process
 
-After starting the simulated activity, the SIEM dashboard raised a single alert surfacing the offending process in the alert panel.
+After starting the simulated activity, the `TryHackMe simulated SIEM dashboard` raised a single alert surfacing the offending process in the alert panel.
 
 <img src="01_miner.png" width="800">
 

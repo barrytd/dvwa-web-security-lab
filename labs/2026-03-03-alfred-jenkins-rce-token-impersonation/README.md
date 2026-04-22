@@ -2,7 +2,7 @@
 
 ## Overview
 
-Full walkthrough of the TryHackMe Alfred room. This room covers exploiting a Jenkins CI/CD server misconfiguration to gain an initial foothold, followed by Windows token impersonation to escalate privileges to SYSTEM.
+Full walkthrough of the TryHackMe Alfred Windows box, gaining initial access by logging into a Jenkins CI/CD server with default `admin:admin` credentials and abusing the Execute Windows batch command build step to land a Nishang PowerShell reverse shell as `alfred\bruce`, then upgrading to a Meterpreter session and abusing `SeImpersonatePrivilege` via the Incognito module to impersonate the `BUILTIN\Administrators` token and escalate to `NT AUTHORITY\SYSTEM`.
 
 **Platform:** TryHackMe | **Room:** Alfred | **Difficulty:** Easy
 

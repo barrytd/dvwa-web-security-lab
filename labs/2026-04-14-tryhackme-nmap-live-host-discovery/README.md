@@ -9,7 +9,7 @@
 
 ## Overview
 
-Nmap Live Host Discovery is the first room in TryHackMe's Nmap series and focuses on the host discovery stage that precedes port scanning. The room walks through how Nmap decides which systems on a target range are worth scanning, the OSI/TCP-IP layers each discovery technique operates at, and how privilege level on the attacker machine changes which packets Nmap is allowed to craft. Host discovery matters because attempting to port-scan offline systems wastes time and generates unnecessary network noise that can tip off defenders.
+The room walks through Nmap's host discovery stage end to end, covering ARP behavior on a segmented LAN, cross-subnet ICMP Echo/Timestamp/Address-Mask probes, TCP SYN/ACK and UDP ping fallbacks when ICMP is filtered, the impact of attacker privilege level on which packets Nmap can craft, and safe target enumeration with `nmap -sL` before any probe leaves the box.
 
 ---
 
@@ -41,13 +41,6 @@ Nmap Live Host Discovery is the first room in TryHackMe's Nmap series and focuse
 | Host discovery only | `-sn` | Skip port scan after host discovery |
 | No DNS lookup | `-n` | Skip reverse DNS on targets |
 | Reverse DNS all hosts | `-R` | Resolve names even for offline hosts |
-
----
-
-## Tools Used
-
-- Nmap (AttackBox)
-- TryHackMe network simulator (ARP and ping packet walkthrough)
 
 ---
 

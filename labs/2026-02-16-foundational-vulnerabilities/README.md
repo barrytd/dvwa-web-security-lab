@@ -2,13 +2,9 @@
 
 ## Overview
 
-Multi-vulnerability testing session against DVWA at Low security level covering core OWASP Top 10 categories including injection, client-side attacks, access control failures, and file inclusion.
+End-to-end exploitation of DVWA at Low security level chaining SQL injection, reflected and stored XSS, CSRF, command injection, broken access control with IDOR, and LFI via `php://filter` to enumerate the database, execute arbitrary commands, escalate to admin functionality, and disclose backend database credentials.
 
-**Target:** DVWA (Local Lab) | **Stack:** Apache 2.4, PHP 8.4, MariaDB | **Security Level:** Low
-
-**Vulnerabilities Covered:**
-
-SQL Injection → XSS (Reflected & Stored) → CSRF → Command Injection → Broken Access Control → Local File Inclusion
+**Target:** `DVWA (Local Lab)` (Apache 2.4, PHP 8.4, MariaDB — Security Level: Low)
 
 ---
 

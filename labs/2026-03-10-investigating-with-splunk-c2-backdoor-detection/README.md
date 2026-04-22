@@ -9,27 +9,9 @@
 
 ## Overview
 
-Investigating with Splunk is a blue team lab that places you in the role of a SOC analyst investigating compromised Windows machines. An adversary has gained access to several hosts, created a backdoor user account, and established a C2 channel using an encoded PowerShell script. The investigation is conducted entirely through Splunk using SPL queries against pre-ingested Windows event logs and Sysmon data.
+Acting as a SOC analyst on the Cybertees network, this investigation uses Splunk SPL queries over 12,256 pre-ingested Windows event logs and Sysmon records to uncover a WMI-launched backdoor account (`A1berto` impersonating `Alberto`) created on `Micheal.Beaven` and a double-Base64 encoded PowerShell C2 beacon on `James.browne` that, after decoding with iconv on Kali and defanging in CyberChef, resolves to `hxxp[://]10[.]10[.]10[.]5/news[.]php`.
 
----
-
-## Target Information
-
-| Field | Value |
-|---|---|
-| Platform | TryHackMe SOC Level 1 Path |
-| Log Index | main |
-| Total Events | 12,256 |
-| Infected Hosts | Micheal.Beaven, James.browne |
-| Attacker Account | Cybertees\James |
-
----
-
-## Tools Used
-
-- Splunk (SPL queries)
-- CyberChef (URL defanging, Base64 decoding)
-- Kali Linux terminal (Base64 decoding via iconv)
+**Target:** `Cybertees` (Windows enterprise environment — hosts Micheal.Beaven and James.browne)
 
 ---
 
@@ -37,7 +19,7 @@ Investigating with Splunk is a blue team lab that places you in the role of a SO
 
 ### Phase 1: Scoping the Data
 
-The first step in any Splunk investigation is confirming how much data you are working with. A broad search against the index establishes scope.
+The first step in any `Splunk` investigation is confirming how much data you are working with. A broad search against the index establishes scope.
 
 ```
 index="main"
@@ -146,7 +128,7 @@ index="main" EventID=4103
 
 ### Phase 7: C2 URL Extraction
 
-The malicious PowerShell process was launched with the `-enc` flag, indicating an encoded command. The encoded string is Base64 encoded UTF-16LE, which is standard for PowerShell. Decoding it on Kali reveals the full script.
+The malicious PowerShell process was launched with the `-enc` flag, indicating an encoded command. The encoded string is Base64 encoded UTF-16LE, which is standard for PowerShell. Decoding it on `Kali Linux` using `iconv` reveals the full script.
 
 ```bash
 echo "<base64_string>" | base64 -d | iconv -f UTF-16LE -t UTF-8 2>/dev/null

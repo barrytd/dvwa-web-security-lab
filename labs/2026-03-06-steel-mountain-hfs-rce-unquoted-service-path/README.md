@@ -9,31 +9,11 @@
 
 ## Overview
 
-Steel Mountain is a Windows machine themed around the TV show Mr. Robot. The attack chain involves exploiting a known remote code execution vulnerability in Rejetto HTTP File Server (HFS) 2.3 to gain an initial foothold, followed by privilege escalation via an unquoted service path vulnerability in a third-party application. The lab is completed twice: once using Metasploit for automation, and once entirely manually to demonstrate the same techniques without framework assistance.
+Compromise of the TryHackMe Steel Mountain Windows Server 2012 R2 box by exploiting Rejetto HFS 2.3 macro RCE (CVE-2014-6287) on port 8080 to land a shell as `steelmountain\bill`, then escalating to `NT AUTHORITY\SYSTEM` by planting a malicious `Advanced.exe` in the writable `C:\Program Files (x86)\IObit\` directory to hijack the unquoted service path of `AdvancedSystemCareService9` — completed both via Metasploit and manually using ExploitDB script 39161.py, msfvenom, a Python HTTP server, and netcat.
 
 ---
 
-## Target Information
-
-| Field | Value |
-|---|---|
-| Hostname | STEELMOUNTAIN |
-| IP Address | 10.65.152.31 |
-| OS | Windows Server 2012 R2 Datacenter (Build 9600) |
-| User | steelmountain\bill |
-
----
-
-## Tools Used
-
-- nmap
-- Metasploit Framework (Task 2 only)
-- msfvenom
-- PowerUp.ps1
-- winPEAS
-- Python HTTP server
-- netcat
-- exploit 39161.py (ExploitDB)
+**Target:** `10.65.152.31` (STEELMOUNTAIN — Windows Server 2012 R2 Datacenter, Build 9600)
 
 ---
 

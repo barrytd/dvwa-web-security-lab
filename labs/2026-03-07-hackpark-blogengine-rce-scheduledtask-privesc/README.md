@@ -9,32 +9,11 @@
 
 ## Overview
 
-HackPark is a Windows machine running a BlogEngine.NET blog. The attack chain involves brute forcing the admin login using Hydra, exploiting an authenticated file upload vulnerability in BlogEngine.NET 3.3.6.0 to gain an initial foothold, and escalating privileges by abusing a misconfigured scheduled task that executes a binary as SYSTEM from a world-writable directory. The lab is completed twice: once using Metasploit for the privilege escalation, and once entirely manually using winPEAS and netcat.
+Compromise of the TryHackMe HackPark Windows Server 2012 R2 box by brute forcing the BlogEngine.NET admin login with Hydra (using fresh VIEWSTATE tokens captured via Burp Suite) to recover `admin:1qaz2wsx`, exploiting the authenticated `.ascx` file upload RCE in BlogEngine.NET 3.3.6.0 (CVE-2019-6714) via ExploitDB 46353.cs to land a shell as `IIS APPPOOL\Blog`, then escalating to `NT AUTHORITY\SYSTEM` by replacing `Message.exe` in the world-writable `C:\Program Files (x86)\SystemScheduler` directory so the scheduled task fires the payload as SYSTEM — completed both via Metasploit and manually with msfvenom, winPEAS, and netcat.
 
 ---
 
-## Target Information
-
-| Field | Value |
-|---|---|
-| Hostname | HACKPARK |
-| IP Address | 10.66.179.121 |
-| OS | Windows Server 2012 R2 (6.3 Build 9600) |
-| User | IIS APPPOOL\Blog |
-
----
-
-## Tools Used
-
-- nmap
-- Hydra
-- Burp Suite
-- msfvenom
-- Metasploit Framework (Task 2 only)
-- winPEAS
-- Python HTTP server
-- netcat
-- exploit 46353.cs (ExploitDB)
+**Target:** `10.66.179.121` (HACKPARK — Windows Server 2012 R2, 6.3 Build 9600)
 
 ---
 

@@ -2,13 +2,9 @@
 
 ## Overview
 
-Multiple compromise paths against a Metasploitable 2 host through manual service exploitation, privilege escalation via system misconfiguration, and post-exploitation credential access.
+Manual compromise of a Metasploitable 2 host at 192.168.56.103 by exploiting the UnrealIRCd backdoor on port 6667 with `netcat` to land a root reverse shell, then re-entering as `msfadmin` and abusing unrestricted `sudo -i` to escalate, finishing with post-exploitation extraction of DVWA database credentials from `config.inc.php` and direct `mysql` access to dump user password hashes.
 
-**Target:** 192.168.56.103 | **Environment:** VirtualBox Host-Only Network
-
-**Attack Path:**
-
-Service Enumeration → Manual RCE (UnrealIRCd Backdoor) → Root → Sudo Misconfiguration → Root → Credential Harvesting → Database Access
+**Target:** `192.168.56.103` (Metasploitable 2, VirtualBox host-only network)
 
 ---
 

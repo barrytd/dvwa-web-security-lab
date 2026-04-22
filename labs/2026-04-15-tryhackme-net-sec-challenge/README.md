@@ -9,27 +9,11 @@
 
 ## Overview
 
-Net Sec Challenge is a practical capstone for TryHackMe's Network Security module. The room presents a single target machine and requires using only Nmap, Telnet, and Hydra to enumerate services, extract hidden flags from server banners, brute force FTP credentials, and complete a covert scan that avoids IDS detection. No walkthroughs or hints are provided — just the tools and the questions.
+A Nmap full-range scan enumerates six open TCP ports on the target, HTTP and SSH banners on ports 80 and 22 leak two flags (the HTTP Server header inspected in a browser and the SSH version string grabbed with Telnet), Hydra brute forces the `quinn` FTP account on nonstandard port 10021 against rockyou to recover a third flag from `ftp_flag.txt`, and a covert Nmap scan tuned for 0% IDS detection against the port 8080 challenge yields the final flag.
 
 ---
 
-## Target Information
-
-| Field | Value |
-|---|---|
-| Target IP | 10.65.141.64 |
-| Open TCP Ports | 6 |
-| Tools Allowed | Nmap, Telnet, Hydra |
-| Flags Captured | 4 |
-
----
-
-## Tools Used
-
-- Nmap (port scanning, service enumeration, covert scanning)
-- Telnet (banner grabbing)
-- Hydra (FTP brute force)
-- Browser (HTTP header inspection)
+**Target:** `10.65.141.64` (Linux host with SSH, HTTP, SMB, HTTP proxy, and FTP on a nonstandard port)
 
 ---
 
@@ -61,7 +45,7 @@ Port **10021** appeared running an unknown service. Six TCP ports open in total.
 
 ### Phase 2: HTTP Server Header Flag
 
-Inspecting the HTTP response headers from the web server on port 80 revealed a flag embedded in the Server header.
+Inspecting the HTTP response headers in the browser from the web server on port 80 revealed a flag embedded in the Server header.
 
 <img src="03-http-header-flag.png" width="800">
 

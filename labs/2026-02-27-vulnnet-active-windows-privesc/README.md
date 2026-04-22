@@ -2,21 +2,15 @@
 
 ## Overview
 
-Full Windows Active Directory attack chain against the TryHackMe VulnNet: Active room. This room covers unauthenticated Redis exploitation, Net-NTLMv2 hash capture via Responder, offline hash cracking, writable SMB share abuse, reverse shell via scheduled PowerShell script, and privilege escalation to SYSTEM using GodPotato.
+Full compromise of the TryHackMe VulnNet: Active domain controller by identifying unauthenticated Redis on port 6379 with `nmap`, abusing `redis-cli` to force a UNC path lookup that leaks the `enterprise-security` Net-NTLMv2 hash to `Responder`, cracking it offline with `hashcat`, enumerating SMB via `smbclient` to find a writable `Enterprise-Share` hosting a scheduled PowerShell script, replacing it with a reverse shell payload caught in `netcat`, and escalating `SeImpersonatePrivilege` to `NT AUTHORITY\SYSTEM` with `GodPotato`.
 
-**Platform:** TryHackMe | **Room:** VulnNet: Active | **Difficulty:** Medium
-
-**Attacker:** Kali Linux | **Target:** 10.67.191.253 | **Domain:** vulnnet.local
-
-**Attack Path:**
-
-Network Enumeration → Unauthenticated Redis → Responder Hash Capture → Hash Cracking → SMB Enumeration → Writable Share Abuse → Reverse Shell → GodPotato SYSTEM
+**Target:** `10.67.191.253` (Windows domain controller — vulnnet.local, TryHackMe)
 
 ---
 
 ## 1. Network Enumeration
 
-Full port scan with service detection identified the target as a Windows Active Directory domain controller.
+Full `nmap` port scan with service detection identified the target as a Windows Active Directory domain controller.
 
 ```bash
 sudo nmap -sV -sC -p- 10.67.191.253

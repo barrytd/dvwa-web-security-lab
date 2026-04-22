@@ -2,21 +2,15 @@
 
 ## Overview
 
-Full Active Directory attack chain against the TryHackMe Attacktive Directory room. This room covers real-world AD enumeration and exploitation techniques including AS-REP Roasting, SMB share enumeration, credential decoding, domain hash dumping, and Pass-the-Hash for Administrator access.
+Full compromise of the TryHackMe Attacktive Directory domain controller by fingerprinting AD services with `nmap`, enumerating valid domain accounts with `kerbrute`, AS-REP Roasting `svc-admin` via `impacket-GetNPUsers` and cracking the ticket with `hashcat`, discovering Base64-encoded `backup` account credentials on an SMB share via `smbclient`, dumping all domain NTLM hashes using `impacket-secretsdump` DRSUAPI, and pivoting Pass-the-Hash into an Administrator shell with `evil-winrm`.
 
-**Platform:** TryHackMe | **Room:** Attacktive Directory | **Difficulty:** Medium
-
-**Attacker:** Kali Linux | **Target:** 10.67.183.59 | **Domain:** spookysec.local
-
-**Attack Path:**
-
-Network Enumeration → User Enumeration (Kerbrute) → AS-REP Roasting → Hash Cracking → SMB Enumeration → Credential Discovery → secretsdump → Pass-the-Hash → Administrator Shell
+**Target:** `10.67.183.59` (Windows domain controller — spookysec.local, TryHackMe)
 
 ---
 
 ## 1. Network Enumeration
 
-Full port scan with service detection identified the target as a Windows Active Directory domain controller running the domain `spookysec.local`.
+Full `nmap` port scan with service detection identified the target as a Windows Active Directory domain controller running the domain `spookysec.local`.
 
 ```bash
 sudo nmap -sV -sC -p- 10.67.183.59

@@ -2,15 +2,9 @@
 
 ## Overview
 
-Full Active Directory attack chain against a self-built lab environment. This lab covers AD environment setup from scratch, network enumeration, credential attacks, hash dumping, Pass-the-Hash, and domain compromise via SYSTEM shell on the domain controller.
+Full compromise of a self-built `lab.local` Active Directory domain by enumerating DC01 with `nmap` and `CrackMapExec`, dumping all NTLM hashes via `impacket-secretsdump` DRSUAPI, cracking the Administrator hash offline with `hashcat`, pivoting via Pass-the-Hash to a SYSTEM shell on the DC through `impacket-psexec`, extracting the `krbtgt` hash for Golden Ticket persistence, Kerberoasting the `sqlservice` SPN with `impacket-GetUserSPNs`, and mapping all Tier Zero attack paths with `BloodHound`.
 
-**Attacker:** Kali Linux (192.168.56.102) | **Domain Controller:** DC01 (192.168.56.10) | **Client:** WIN11-Client (192.168.56.20)
-
-**Domain:** lab.local | **Environment:** VirtualBox Host-Only Network
-
-**Attack Path:**
-
-Network Enumeration → SMB Enumeration → User Enumeration → Hash Dumping → Hash Cracking → Pass-the-Hash → PSExec SYSTEM Shell → krbtgt Extraction → Kerberoasting → BloodHound AD Mapping
+**Target:** `DC01 (192.168.56.10)` — `lab.local` domain controller (Windows Server 2022, VirtualBox Host-Only)
 
 ---
 
@@ -70,7 +64,7 @@ ARP scan identified all live hosts on the lab network.
 
 ## 2. Domain Controller Port Scan
 
-Full TCP scan with service detection confirmed DC01 as the domain controller for lab.local.
+Full TCP `nmap` scan with service detection confirmed DC01 as the domain controller for lab.local.
 
 <img src="02_dc01_nmap_scan.png" width="800">
 

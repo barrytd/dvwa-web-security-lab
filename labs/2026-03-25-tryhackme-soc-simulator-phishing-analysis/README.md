@@ -9,20 +9,9 @@
 
 ## Overview
 
-This lab uses the TryHackMe SOC Simulator to practice real-world phishing alert triage. Five alerts were investigated across two data sources: email logs and firewall logs ingested into Splunk. Each alert required pivoting between data sources to determine whether the activity was a true positive or false positive, document findings, and make escalation decisions. The scenario was completed with 260 points and a first place finish.
+Triaging five SOC Simulator phishing alerts for TheTryDaily by pivoting email and firewall logs in Splunk, the investigation cleared two false positives for legitimate HR vendor emails from `hrconnex.thm`, escalated a Microsoft credential harvesting campaign from the typosquatted `m1crosoftsupport.co` targeting `c.allen`, and escalated an Amazon-themed bit.ly phishing lure from `urgents@amazon.biz` clicked by `h.harris`, finishing the scenario with 260 points and first place.
 
----
-
-## Target Environment
-
-| Field | Value |
-|---|---|
-| Organization | TheTryDaily |
-| Data Sources | Email logs, Firewall logs |
-| SIEM | Splunk |
-| Total Alerts | 5 |
-| True Positives | 3 |
-| False Positives | 2 |
+**Target:** `TheTryDaily` (simulated organization — email and firewall log data sources in Splunk)
 
 ---
 

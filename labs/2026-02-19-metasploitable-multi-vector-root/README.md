@@ -2,13 +2,9 @@
 
 ## Overview
 
-Full system compromise of a Metasploitable 2 host through multiple independent attack vectors — remote service exploitation, backdoored daemons, and local privilege escalation via SUID abuse.
+Full root compromise of a Metasploitable 2 host at 192.168.56.103 from Kali Linux, starting with `nmap` service enumeration and pivoting through three independent vectors — the vsftpd 2.3.4 backdoor, the Samba `usermap_script` RCE, and Distcc unauthenticated RCE followed by SUID-`nmap` local privilege escalation — each yielding root-level shell access.
 
-**Target:** 192.168.56.103 | **Attacker:** Kali Linux | **Environment:** VirtualBox Isolated Lab
-
-**Attack Paths:**
-
-vsftpd Backdoor → Root | Samba usermap_script → Root | Distcc RCE → SUID nmap → Root
+**Target:** `192.168.56.103` (Metasploitable 2, VirtualBox isolated lab)
 
 ---
 
