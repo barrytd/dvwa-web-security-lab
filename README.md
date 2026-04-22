@@ -4,6 +4,12 @@ Penetration testing is hard to break into without experience, so I started build
 
 ## Labs
 
+### [TryHackMe – Overpass](labs/2026-04-22-tryhackme-overpass/README.md)
+
+Compromised a Linux box built as a fictional password manager by bypassing a client-side JavaScript authentication check on the admin login, extracting an encrypted RSA private key from the admin message board, and cracking the key passphrase with ssh2john and rockyou to land SSH as `james`. Escalated to root by hijacking a cron job that pulled a build script from the unregistered `overpass.thm` domain: added the domain to the writable `/etc/hosts`, served a malicious `buildscript.sh` from a Python HTTP server, and caught a reverse shell as root within one minute.
+
+---
+
 ### [TryHackMe – Net Sec Challenge](labs/2026-04-15-tryhackme-net-sec-challenge/README.md)
 
 Completed the Network Security module capstone using only Nmap, Telnet, and Hydra. Enumerated six open TCP ports including an FTP server on nonstandard port 10021, extracted flags from HTTP and SSH server banners, brute forced FTP credentials with Hydra against rockyou, and performed a covert Nmap scan that achieved 0% IDS detection to capture the final flag.
