@@ -10,6 +10,7 @@ Entry-level security professional building hands-on offensive and defensive expe
 
 | Lab | Platform | Summary |
 |---|---|---|
+| [Nessus](labs/2026-04-27-tryhackme-nessus/README.md) | TryHackMe | Configured Nessus Essentials, ran a Basic Network Scan and Web Application Tests scan, and triaged findings ranging from cleartext `login.php` to exposed `.bak` configs and missing X-Frame-Options. |
 | [Overpass 2 — Hacked](labs/2026-04-23-tryhackme-overpass-2-hacked/README.md) | TryHackMe | PCAP forensics to recover a `su` password, cracked a deployed SSH backdoor's hash in hashcat, and `.suid_bash -p` to root. |
 | [Overpass](labs/2026-04-22-tryhackme-overpass/README.md) | TryHackMe | Bypassed client-side auth, cracked an SSH key passphrase, and hijacked a root cron via writable `/etc/hosts`. |
 | [Net Sec Challenge](labs/2026-04-15-tryhackme-net-sec-challenge/README.md) | TryHackMe | Network Security module capstone — Nmap, Telnet, and Hydra against six ports with a 0%-detection covert scan. |
@@ -46,6 +47,7 @@ Entry-level security professional building hands-on offensive and defensive expe
 
 | Lab | Skills Demonstrated |
 |---|---|
+| Nessus | Vulnerability scanner setup (Nessus Essentials), Basic Network Scan and Web App Tests templates, plugin triage, version fingerprinting |
 | Overpass 2 — Hacked | PCAP forensics (Wireshark), reverse-shell payload recovery, offline cracking (John + hashcat mode 1710), SUID bash privesc |
 | Overpass | Client-side auth bypass, SSH key cracking (ssh2john + John), cron hijacking, `/etc/hosts` abuse |
 | Net Sec Challenge | Full-range port enumeration, banner grabbing with Telnet, Hydra FTP brute force, covert Nmap scanning |
