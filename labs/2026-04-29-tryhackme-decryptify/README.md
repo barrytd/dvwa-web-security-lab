@@ -9,7 +9,7 @@
 
 ## Overview
 
-A web app on port 1337 leaks an app.log containing a known email and invite code pair, and an api.js exposing the invite code generation algorithm. Brute forcing the unknown constant value (**99999**) reproduces the algorithm and forges a valid invite for hello@fake.thm, granting authenticated access and the first flag. The dashboard then accepts a date parameter that the server decrypts with openssl_decrypt and executes as a shell command, while leaking padding-validation errors in the response, which is the textbook precondition for a *padding oracle attack*. **padbuster** decrypts the original "date +%Y" payload and forges a new ciphertext for "cat /home/ubuntu/flag.txt", yielding command execution and the final flag.
+A web app on port 1337 leaks an app.log containing a known email and invite code pair, and an api.js exposing the invite code generation algorithm. Brute forcing the unknown constant value (**99999**) reproduces the algorithm and forges a valid invite for hello@fake.thm, granting authenticated access and the first flag. The dashboard then accepts a date parameter that the server decrypts (almost certainly with Blowfish, given the 8-byte block size) and executes as a shell command, while leaking padding-validation errors in the response. That error leak is the textbook setup for a *padding oracle attack* (an attack that uses the server's "valid / invalid padding" answers as a yes/no game to figure out the secret one byte at a time). **padbuster** decrypts the original "date +%Y" payload and forges a new ciphertext for "cat /home/ubuntu/flag.txt", yielding command execution and the final flag.
 
 ---
 
@@ -85,7 +85,7 @@ The /javascript/ directory exposed an obfuscated api.js file. The string array e
 2025-01-23 14:34:20 - Invite created, code: MTM0ODMzNzEyMg== for alpha@fake.thm
 ```
 
-This is the **known-plaintext lever** needed to reverse the unknown variable in the invite generator.
+This is the **known-plaintext lever** (a matched pair of input and output that lets you reverse-engineer the secret part of the algorithm) needed to figure out the unknown variable in the invite generator.
 
 <img src="07-app-log.png" width="800">
 
@@ -93,7 +93,7 @@ This is the **known-plaintext lever** needed to reverse the unknown variable in 
 
 ### Phase 9: Decoding the Invite Code
 
-Decoding "MTM0ODMzNzEyMg==" with base64 produces **1348337122**, a numeric seed value, not a random token. The invite code is simply the base64 of mt_rand() output seeded by a deterministic function of the email.
+Decoding "MTM0ODMzNzEyMg==" with base64 produces **1348337122**, a numeric seed value, not a random token. The invite code is simply the base64-encoded output of PHP's mt_rand() (a pseudo-random number generator), seeded by a deterministic function of the email (meaning the same email always produces the same "random" number).
 
 <img src="09-base64-decode.png" width="800">
 
@@ -158,7 +158,7 @@ Warning: openssl_decrypt(): IV passed is only 6 bytes long, cipher expects an IV
 Padding error: error:0606506D:digital envelope routines:EVP_DecryptFinal_ex:wrong final block length
 ```
 
-This is a **padding oracle**: the server reveals whether decrypted ciphertext has valid PKCS#7 padding through its error responses. Combined with the fact that the decrypted value is then executed as a shell command, this is *full RCE*, but only if the oracle can be turned into both decryption and forgery.
+This is a **padding oracle**: the server reveals whether the decrypted data has valid padding (the standard filler bytes that get appended to make the message a multiple of the block size, called PKCS#7) through its error responses. The attacker doesn't need to know the encryption key. By tampering with the ciphertext one byte at a time and watching whether the server says "valid" or "padding error," they can recover the original plaintext byte by byte. Combined with the fact that the decrypted value is then executed as a shell command, this is *full RCE* (remote code execution), but only if the oracle can be turned into both decryption and forgery.
 
 <img src="16-padding-oracle-error.png" width="800">
 
@@ -166,7 +166,7 @@ This is a **padding oracle**: the server reveals whether decrypted ciphertext ha
 
 ### Phase 16: Padding Oracle - Decrypting the Original Ciphertext
 
-padbuster is pointed at the dashboard endpoint with the legitimate ciphertext (the URL-encoded value from a clean dashboard request) and the session cookie. The block size is **8** and encoding mode **0** (base64).
+padbuster is pointed at the dashboard endpoint with the legitimate ciphertext (the URL-encoded value from a clean dashboard request) and the session cookie. The block size is **8** bytes (which rules out AES, since AES always uses 16-byte blocks, and points strongly at Blowfish) and encoding mode **0** (base64).
 
 ```
 padbuster "http://10.66.140.225:1337/dashboard.php?date=PluygJIrA%2Fr%2FS6xGAgx9BlWHmqN9V%2BqkW88E05wRL3c%3D" \
@@ -177,7 +177,7 @@ padbuster "http://10.66.140.225:1337/dashboard.php?date=PluygJIrA%2Fr%2FS6xGAgx9
 
 <img src="17-padding-oracle-decryption.png" width="800">
 
-After thousands of byte-by-byte requests, padbuster recovers the intermediate state and the plaintext.
+After thousands of byte-by-byte requests, padbuster recovers the intermediate state (the in-between value the server produces during decryption, before the final XOR step that gives you the real plaintext) and from there, the actual plaintext.
 
 <img src="18-padding-oracle-results.png" width="800">
 
@@ -189,7 +189,7 @@ The server has been blindly executing the decrypted ciphertext as a shell comman
 
 ### Phase 17: Padding Oracle - Forging a Malicious Ciphertext
 
-The same oracle that allows decryption also allows **encryption** of attacker-chosen plaintext (CBC bit-flipping using known intermediate values, *no key required*). padbuster's plaintext mode is used to forge ciphertext for "cat /home/ubuntu/flag.txt".
+The same oracle that allows decryption also allows **encryption** of attacker-chosen plaintext. This is called *CBC bit-flipping*: because CBC mode (the chaining method that links each encrypted block to the previous one with XOR) uses simple math, once you know the intermediate values from the decryption phase you can run the math backwards to build a fake ciphertext that decrypts to whatever you want, *no key required*. padbuster's plaintext mode is used to forge ciphertext for "cat /home/ubuntu/flag.txt".
 
 ```
 padbuster ... 8 -encoding 0 -cookies "..." -plaintext "cat /home/ubuntu/flag.txt"
@@ -223,11 +223,11 @@ Loading the dashboard with the forged ciphertext as the date parameter causes th
 
 ## Vulnerability Summary
 
-### Predictable Invite Code Generator (CWE-330, CWE-340)
+### Predictable Invite Code Generator (CWE-330, CWE-340: weak randomness)
 
-The invite code is the base64 of mt_rand() output, where mt_srand() is seeded by a deterministic function of the user's email and a hardcoded constant. **mt_rand is not cryptographically secure on its own**, and combining a deterministic seed with a publicly-derivable input (email) means every invite code in the system is reproducible by anyone who knows the constant. The constant was recoverable through brute force in milliseconds because a known plaintext and ciphertext pair leaked via app.log.
+The invite code is the base64 of mt_rand() output, where mt_srand() (the function that "seeds" the random number generator with a starting value) is fed a deterministic function of the user's email and a hardcoded constant. **mt_rand is not cryptographically secure on its own** (it produces numbers that look random but follow a predictable pattern), and combining a predictable starting seed with a publicly-derivable input (the email) means every invite code in the system is reproducible by anyone who knows the constant. The constant was recoverable through brute force in milliseconds because a known plaintext and ciphertext pair leaked via app.log.
 
-**Remediation:** Generate invite codes from random_bytes() or openssl_random_pseudo_bytes() and store them server-side rather than deriving them. Never bind invite codes to user-controllable inputs through deterministic functions. Rotate any tokens derived from mt_rand.
+**Remediation:** Generate invite codes from random_bytes() or openssl_random_pseudo_bytes() (PHP's cryptographically secure random functions) and store them server-side rather than deriving them. Never bind invite codes to user-controllable inputs through deterministic functions. Rotate any tokens derived from mt_rand.
 
 ### Sensitive Log Disclosure - /logs/app.log
 
@@ -235,24 +235,24 @@ The application's log file was world-readable from the web root and contained op
 
 **Remediation:** Move logs outside the web root entirely (for example, /var/log/app/). If they must live inside the web tree, deny serving them via the web server. Strip secrets and tokens from log messages before they are written.
 
-### Padding Oracle on Dashboard date Parameter (CWE-209, CWE-326)
+### Padding Oracle on Dashboard date Parameter (CWE-209, CWE-326: information leak through error messages plus weak crypto)
 
-The server decrypts user-supplied ciphertext with openssl_decrypt and surfaces both PHP warnings ("IV passed is only 6 bytes long") and OpenSSL errors ("EVP_DecryptFinal_ex:wrong final block length") directly in the HTTP response. This converts an internal cryptographic check into an oracle that an attacker can query *256 times per byte* to recover plaintext and forge ciphertext.
+The server decrypts user-supplied ciphertext with openssl_decrypt and surfaces both PHP warnings ("IV passed is only 6 bytes long" — the IV, or initialization vector, is the random starting value the cipher needs alongside the key) and OpenSSL errors ("EVP_DecryptFinal_ex:wrong final block length") directly in the HTTP response. This converts an internal cryptographic check into an oracle that an attacker can query *256 times per byte* (the number of possible values for one byte, 0 through 255) to recover plaintext and forge ciphertext.
 
-**Remediation:** Use authenticated encryption such as AES-GCM or AES-CCM, so any tampered ciphertext fails authentication before padding is checked. If CBC must be used, prepend an HMAC over the ciphertext and verify the HMAC in constant time before calling openssl_decrypt. Never differentiate padding errors from authentication errors in client-visible responses; return a single generic 400 for all decryption failures and log the detail server-side only.
+**Remediation:** Use authenticated encryption such as AES-GCM or AES-CCM (modes that verify a built-in cryptographic signature before decrypting, so tampered ciphertext fails the signature check and never reveals padding info). If CBC must be used, prepend an HMAC (a keyed signature over the ciphertext) and verify the HMAC in constant time (a comparison that always takes the same amount of time, so an attacker can't tell from response timing how many bytes matched) before calling openssl_decrypt. Never differentiate padding errors from authentication errors in client-visible responses; return a single generic 400 for all decryption failures and log the detail server-side only.
 
-### Command Execution of Decrypted User Input (CWE-78)
+### Command Execution of Decrypted User Input (CWE-78: OS command injection)
 
 Even if the cryptography were sound, the dashboard pipes the decrypted value into a shell command. *A valid signed token would still let an authenticated user run arbitrary commands as the web user.*
 
-**Remediation:** Do not pass user-controlled values, encrypted or otherwise, into shell commands. If a date is needed, parse it into an integer or DateTime and use language-native time formatting. **Treat decryption as parsing untrusted input, not as a trust boundary.**
+**Remediation:** Do not pass user-controlled values, encrypted or otherwise, into shell commands. If a date is needed, parse it into an integer or DateTime and use language-native time formatting. **Treat decryption as parsing untrusted input, not as a trust boundary** (in plain English: just because something was encrypted doesn't mean the decrypted value is safe to trust, the attacker may have crafted it).
 
 ---
 
 ## Key Takeaways
 
-- A padding oracle is a **bidirectional primitive**: the same query pattern that decrypts the server's ciphertext also encrypts attacker-chosen plaintext. Forgetting the encryption half is the most common reason this class of bug looks "harmless" in a triage. padbuster's plaintext flag does both halves with the same oracle.
-- "Custom" token generators built on mt_rand plus a deterministic seed are *not random in any meaningful sense*. The moment one token and email pair leaks through a log, a support ticket, or an email screenshot, the entire token space collapses. This is the same lesson as predictable session IDs from the DVWA labs, scaled up to invite codes.
-- Verbose error messages are not a low-severity finding when the underlying operation is a cryptographic primitive. The PHP warning *and* the OpenSSL error message both contributed to the oracle here, and either alone would have given the attacker a binary signal, which is all that is needed.
-- **Decryption is parsing, not authentication.** Anything decrypted from user-controlled ciphertext is still attacker-influenced input and must not be passed into system(), eval(), SQL strings, or anywhere else where unvalidated input is dangerous. Authenticated encryption (AES-GCM) is the floor for any new code; CBC plus raw padding checks is essentially un-deployable safely.
-- The app.log exposure was the smallest finding by itself but the *load-bearing one* for the chain. Real attacks rarely chain CVEs, they chain low-severity hygiene issues (a directory listing, a stale log, a verbose error) into a critical path. Gobuster plus reading every recovered file is the move every time.
+- A padding oracle is a **bidirectional tool** (it works both ways): the same yes/no question pattern that lets you decrypt the server's ciphertext also lets you encrypt your own chosen text. Forgetting the encryption half is the most common reason this class of bug looks "harmless" in a triage. padbuster's plaintext flag does both halves with the same oracle.
+- "Custom" token generators built on mt_rand plus a predictable starting seed are *not random in any meaningful sense*. The moment one token and email pair leaks through a log, a support ticket, or an email screenshot, the entire token space collapses. This is the same lesson as predictable session IDs from the DVWA labs, scaled up to invite codes.
+- Verbose error messages are not a low-severity finding when the underlying operation is cryptographic. The PHP warning *and* the OpenSSL error message both contributed to the oracle here, and either alone would have given the attacker a yes/no signal, which is all that is needed.
+- **Decryption is parsing, not authentication.** Just because data was encrypted doesn't mean the decrypted value is safe to trust. Anything decrypted from user-controlled ciphertext is still attacker-influenced input and must not be passed into system(), eval(), SQL strings, or anywhere else where unvalidated input is dangerous. Authenticated encryption (like AES-GCM) is the floor for any new code; CBC plus raw padding checks is essentially un-deployable safely.
+- The app.log exposure was the smallest finding by itself but the *load-bearing one* for the chain (the small step the rest of the attack rested on). Real attacks rarely chain CVEs, they chain low-severity hygiene issues (a directory listing, a stale log, a verbose error) into a critical path. Gobuster plus reading every recovered file is the move every time.
