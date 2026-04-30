@@ -9,9 +9,9 @@
 
 ## Overview
 
-Working through a static SIEM dashboard simulation, this SOC Level 1 room triages a `Potential CryptoMiner Activity` alert on a `WindowsEventLogs` EventID 4688 process-creation record, pivots to the raw event showing user `Chris` executing `C:\Users\Chris\temp\cudominer.exe` on `HR_02`, inspects the wildcard detection rule (`*miner*` OR `*crypt*`), and escalates as a true positive with host isolation based on the known cryptominer name, user-writable execution path, and HR host role.
+Working through a static SIEM dashboard simulation, this SOC Level 1 room triages a *Potential CryptoMiner Activity* alert on a WindowsEventLogs EventID 4688 process-creation record, pivots to the raw event showing user **Chris** executing **C:\Users\Chris\temp\cudominer.exe** on **HR_02**, inspects the wildcard detection rule (*\*miner\** OR *\*crypt\**), and escalates as a true positive with host isolation based on the known cryptominer name, user-writable execution path, and HR host role.
 
-**Target:** `HR_02` (Windows HR workstation, user `Chris` executing `cudominer.exe`)
+**Target:** HR_02 (Windows HR workstation, user Chris executing cudominer.exe)
 
 ---
 
@@ -22,7 +22,7 @@ Working through a static SIEM dashboard simulation, this SOC Level 1 room triage
 | Rule Name | Potential CryptoMiner Activity |
 | Log Source | WindowsEventLogs |
 | Event ID | 4688 |
-| Process Name Match | `*miner*` OR `*crypt*` |
+| Process Name Match | *miner* OR *crypt* |
 
 ---
 
@@ -30,13 +30,13 @@ Working through a static SIEM dashboard simulation, this SOC Level 1 room triage
 
 ### Phase 1: Alert Triggered on Suspicious Process
 
-After starting the simulated activity, the `TryHackMe simulated SIEM dashboard` raised a single alert surfacing the offending process in the alert panel.
+After starting the simulated activity, the TryHackMe simulated SIEM dashboard raised a single alert surfacing the offending process in the alert panel.
 
 <img src="01_miner.png" width="800">
 
-**Suspicious process: `cudominer.exe`**
+**Suspicious process: cudominer.exe**
 
-The filename is a strong indicator of cryptocurrency mining activity. "Cudo Miner" is a known GPU-based cryptominer, and its presence on a corporate endpoint is almost always a policy violation regardless of how it was installed.
+The filename is a strong indicator of cryptocurrency mining activity. *Cudo Miner* is a known GPU-based cryptominer, and its presence on a corporate endpoint is almost always a policy violation regardless of how it was installed.
 
 ---
 
@@ -53,7 +53,7 @@ Drilling into the underlying event log entry surfaced the full context of the pr
 | Log Source | Win_event_log |
 | Hostname | HR_02 |
 
-The execution path is the key detail: `C:\Users\Chris\temp\cudominer.exe`. Running binaries from a user's `temp` directory is a well-known red flag because `%TEMP%` is writable by low-privilege users and is routinely abused by malware and unauthorized software to stage payloads outside of monitored install paths.
+The execution path is the key detail: **C:\Users\Chris\temp\cudominer.exe**. Running binaries from a user's temp directory is a well-known red flag because %TEMP% is writable by low-privilege users and is routinely abused by malware and unauthorized software to stage payloads outside of monitored install paths.
 
 ---
 
@@ -70,7 +70,7 @@ AND Log_Source = WindowsEventLogs
 AND ProcessName = (*miner* OR *crypt*)
 ```
 
-The rule leverages EventID 4688 (Windows process creation) and fires on any new process whose name contains `miner` or `crypt`. In this case, the `miner` substring inside `cudominer.exe` satisfied the condition. This is the same kind of normalized field-value matching described in the theory portion of the room, the logs have to be parsed and normalized before a rule like this can work.
+The rule leverages EventID 4688 (Windows process creation) and fires on any new process whose name contains *miner* or *crypt*. In this case, the *miner* substring inside cudominer.exe satisfied the condition. This is the same kind of normalized field-value matching described in the theory portion of the room. The logs have to be parsed and normalized before a rule like this can work.
 
 ---
 
@@ -84,9 +84,9 @@ The analyst is offered two triage outcomes: treat the alert as a true positive a
 
 The decision is based on three correlated findings:
 
-- **Process name:** `cudominer.exe` matches a known cryptominer family
-- **Execution path:** `C:\Users\Chris\temp\` is a user-writable staging directory, not a legitimate install location
-- **Host role:** `HR_02` is an HR workstation with no legitimate reason to run GPU mining software
+- **Process name:** cudominer.exe matches a known cryptominer family
+- **Execution path:** C:\Users\Chris\temp\ is a user-writable staging directory, not a legitimate install location
+- **Host role:** HR_02 is an HR workstation with no legitimate reason to run GPU mining software
 
 Any one of these would warrant investigation. Together they are conclusive.
 
@@ -98,7 +98,7 @@ Selecting the correct action surfaced the room flag.
 
 <img src="05_flag.png" width="800">
 
-**Flag:** `THM{000_SIEM_INTRO}`
+**Flag:** THM{000_SIEM_INTRO}
 
 ---
 
@@ -112,15 +112,15 @@ Selecting the correct action surfaced the room flag.
 
 ### Unauthorized Cryptominer Execution - Chris on HR_02
 
-The user Chris executed `cudominer.exe` from `C:\Users\Chris\temp\` on the HR workstation HR_02. Cryptominer software running on corporate endpoints consumes hardware resources, inflates power costs, degrades user productivity, and in many cases indicates a broader compromise since miners are commonly dropped as post-exploitation payloads.
+The user Chris executed cudominer.exe from C:\Users\Chris\temp\ on the HR workstation HR_02. Cryptominer software running on corporate endpoints consumes hardware resources, inflates power costs, degrades user productivity, and in many cases indicates a broader compromise since miners are commonly dropped as post-exploitation payloads.
 
 **Remediation:** Isolate HR_02 from the network to prevent lateral movement and any outbound mining pool connections. Acquire the binary from the temp directory for malware analysis. Review Chris's account activity for the initial infection vector (phishing, drive-by download, USB, insider install). Reset Chris's credentials. After containment, restore or reimage the host.
 
 ### Detection Rule Coverage Gap - Wildcard Matching
 
-The rule `ProcessName = (*miner* OR *crypt*)` is effective for commodity miners but is also prone to false positives on legitimate software whose names happen to match, such as `TrueCrypt`, `BitLocker`-adjacent tooling, or internal tools using those substrings. Without paired tuning the rule will generate alert fatigue.
+The rule ProcessName = (*miner* OR *crypt*) is effective for commodity miners but is also prone to false positives on legitimate software whose names happen to match, such as *TrueCrypt*, *BitLocker*-adjacent tooling, or internal tools using those substrings. Without paired tuning the rule will generate alert fatigue.
 
-**Remediation:** Pair wildcard process-name rules with additional signals such as execution path (flag binaries running from user temp/AppData), parent process, or user group. Maintain an allowlist of legitimate processes matching `*crypt*` for the environment. Monitor false positive rates and retire or narrow rules that produce consistent noise.
+**Remediation:** Pair wildcard process-name rules with additional signals such as execution path (flag binaries running from user temp/AppData), parent process, or user group. Maintain an allowlist of legitimate processes matching *crypt* for the environment. Monitor false positive rates and retire or narrow rules that produce consistent noise.
 
 ---
 
@@ -128,6 +128,6 @@ The rule `ProcessName = (*miner* OR *crypt*)` is effective for commodity miners 
 
 - SIEM value comes from correlation and normalization, not just collection. A single 4688 event is noise; the same event matched against a curated rule set becomes an actionable alert
 - Detection rules are field-driven. Writing good rules depends on understanding which normalized fields (EventID, ProcessName, Log_Source, NewProcessName) a given activity populates
-- Wildcard string matching on process names is cheap and effective for commodity threats like cryptominers, but it is prone to false positives. Any rule using `*miner*` or `*crypt*` must be paired with a tuning process for legitimate software that matches
-- Execution path is a strong triage signal. Binaries running out of user-writable directories like `C:\Users\<user>\temp\` deserve scrutiny even when the filename itself looks benign
-- The triage decision is not just "did the rule match" but "does this match represent a policy violation in this context." An HR endpoint running a GPU miner is a true positive regardless of whether the miner is technically malware
+- Wildcard string matching on process names is cheap and effective for commodity threats like cryptominers, but it is prone to false positives. Any rule using *miner* or *crypt* must be paired with a tuning process for legitimate software that matches
+- Execution path is a strong triage signal. Binaries running out of user-writable directories like C:\Users\<user>\temp\ deserve scrutiny even when the filename itself looks benign
+- The triage decision is not just *"did the rule match"* but *"does this match represent a policy violation in this context."* An HR endpoint running a GPU miner is a true positive regardless of whether the miner is technically malware

@@ -1,16 +1,16 @@
-# Kioptrix Level 2 – Web to Root
+# Kioptrix Level 2 - Web to Root
 
 ## Overview
 
-Full compromise of the Kioptrix Level 1.1 CentOS host by discovering the target with `netdiscover`, fingerprinting an outdated Apache/PHP/MySQL stack with `nmap` and `whatweb`, bypassing authentication via SQL injection on the login form, gaining RCE through a ping command-injection flaw, spawning a reverse shell as `apache`, and escalating to root with the `sock_sendpage` (CVE-2009-2698) kernel exploit matched via `searchsploit`.
+Full compromise of the Kioptrix Level 1.1 CentOS host by discovering the target with netdiscover, fingerprinting an outdated Apache/PHP/MySQL stack with nmap and whatweb, bypassing authentication via **SQL injection** on the login form, gaining RCE through a ping **command-injection** flaw, spawning a reverse shell as *apache*, and escalating to root with the **sock_sendpage (CVE-2009-2698)** kernel exploit matched via searchsploit.
 
-**Target:** `192.168.56.105` (CentOS / Apache 2.0.52, PHP 4.3.9, kernel 2.6.9-55.EL)
+**Target:** **192.168.56.105** (CentOS / Apache 2.0.52, PHP 4.3.9, kernel 2.6.9-55.EL)
 
 ---
 
 ## 1. Target Discovery
 
-Identified target using `netdiscover` ARP scanning.
+Identified target using netdiscover ARP scanning.
 
 <img src="01_target_discovery_netdiscover.png" width="800">
 
@@ -18,7 +18,7 @@ Identified target using `netdiscover` ARP scanning.
 
 ## 2. Service Enumeration
 
-Full TCP `nmap` scan, service fingerprinting, and `whatweb` technology identification. Stack identified: Apache 2.0.52, PHP 4.3.9, MySQL, OpenSSH on CentOS.
+Full TCP nmap scan, service fingerprinting, and whatweb technology identification. Stack identified: **Apache 2.0.52**, **PHP 4.3.9**, MySQL, OpenSSH on CentOS.
 
 <img src="02_full_port_scan.png" width="800">
 
@@ -36,7 +36,7 @@ Full TCP `nmap` scan, service fingerprinting, and `whatweb` technology identific
 
 ---
 
-## 4. SQL Injection – Authentication Bypass
+## 4. SQL Injection - Authentication Bypass
 
 The login form was vulnerable to SQL injection. User input was concatenated directly into the query with no sanitization or prepared statements.
 
@@ -50,7 +50,7 @@ $query = "SELECT * FROM users WHERE username = '$username' AND password='$passwo
 
 ---
 
-## 5. Command Injection – Remote Code Execution
+## 5. Command Injection - Remote Code Execution
 
 The ping feature passed user input directly into a shell command with no filtering.
 
@@ -94,9 +94,9 @@ MySQL credentials found hardcoded in source. Database and user table enumerated 
 
 ---
 
-## 9. Kernel Exploitation – Privilege Escalation
+## 9. Kernel Exploitation - Privilege Escalation
 
-Kernel version `2.6.9-55.EL` matched via `searchsploit` to a known RHEL 4 local privilege escalation via `sock_sendpage()`. Exploit transferred, compiled with `gcc`, and executed on target.
+Kernel version **2.6.9-55.EL** matched via searchsploit to a known RHEL 4 local privilege escalation via *sock_sendpage()*. Exploit transferred, compiled with gcc, and executed on target.
 
 <img src="16_searchsploit_kernel_match.png" width="800">
 

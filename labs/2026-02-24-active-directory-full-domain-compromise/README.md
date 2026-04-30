@@ -1,10 +1,10 @@
-# Active Directory Lab – Full Domain Compromise
+# Active Directory Lab - Full Domain Compromise
 
 ## Overview
 
-Full compromise of a self-built `lab.local` Active Directory domain by enumerating DC01 with `nmap` and `CrackMapExec`, dumping all NTLM hashes via `impacket-secretsdump` DRSUAPI, cracking the Administrator hash offline with `hashcat`, pivoting via Pass-the-Hash to a SYSTEM shell on the DC through `impacket-psexec`, extracting the `krbtgt` hash for Golden Ticket persistence, Kerberoasting the `sqlservice` SPN with `impacket-GetUserSPNs`, and mapping all Tier Zero attack paths with `BloodHound`.
+Full compromise of a self-built lab.local Active Directory domain by enumerating DC01 with nmap and CrackMapExec, dumping all NTLM hashes via impacket-secretsdump DRSUAPI, cracking the Administrator hash offline with hashcat, pivoting via **Pass-the-Hash** to a SYSTEM shell on the DC through impacket-psexec, extracting the **krbtgt** hash for **Golden Ticket** persistence, **Kerberoasting** the sqlservice SPN with impacket-GetUserSPNs, and mapping all Tier Zero attack paths with **BloodHound**.
 
-**Target:** `DC01 (192.168.56.10)` — `lab.local` domain controller (Windows Server 2022, VirtualBox Host-Only)
+**Target:** **DC01 (192.168.56.10)**, the lab.local domain controller (Windows Server 2022, VirtualBox Host-Only)
 
 ---
 
@@ -64,17 +64,17 @@ ARP scan identified all live hosts on the lab network.
 
 ## 2. Domain Controller Port Scan
 
-Full TCP `nmap` scan with service detection confirmed DC01 as the domain controller for lab.local.
+Full TCP nmap scan with service detection confirmed DC01 as the domain controller for lab.local.
 
 <img src="02_dc01_nmap_scan.png" width="800">
 
 Key findings:
 
-- Port 53 — DNS
-- Port 88 — Kerberos
-- Port 139/445 — SMB
-- Port 389/3268 — LDAP
-- Port 5985 — WinRM
+- Port 53, DNS
+- Port 88, Kerberos
+- Port 139/445, SMB
+- Port 389/3268, LDAP
+- Port 5985, WinRM
 - SMB Signing: Enabled
 
 ---
@@ -103,7 +103,7 @@ Domain shares enumerated. Administrator has READ/WRITE access to ADMIN$ and C$ c
 
 ---
 
-## 6. Hash Dumping – secretsdump
+## 6. Hash Dumping - secretsdump
 
 All NTLM password hashes extracted from the domain controller using Impacket secretsdump via the DRSUAPI method.
 
@@ -123,7 +123,7 @@ lab.local\jdoe:1105:aad3b435b51404eeaad3b435b51404ee:2b576acbe6bcfda7294d6bd1804
 
 ---
 
-## 7. Hash Cracking – Hashcat
+## 7. Hash Cracking - Hashcat
 
 NTLM hash cracked offline using Hashcat with a custom wordlist.
 
@@ -133,13 +133,13 @@ hashcat -m 1000 2b576acbe6bcfda7294d6bd18041b8fe custom_wordlist.txt
 
 <img src="07_hashcat_cracked.png" width="800">
 
-**Result:** `2b576acbe6bcfda7294d6bd18041b8fe:Password123!`
+**Result:** **2b576acbe6bcfda7294d6bd18041b8fe:Password123!**
 
 ---
 
 ## 8. Pass-the-Hash
 
-Authenticated as Administrator using only the NTLM hash — no plaintext password required.
+Authenticated as Administrator using only the NTLM hash. No plaintext password required.
 
 ```bash
 crackmapexec smb 192.168.56.10 -u Administrator -H 2b576acbe6bcfda7294d6bd18041b8fe
@@ -147,7 +147,7 @@ crackmapexec smb 192.168.56.10 -u Administrator -H 2b576acbe6bcfda7294d6bd18041b
 
 <img src="08_pass_the_hash.png" width="800">
 
-**Result:** Pwn3d! — Full administrative access confirmed via hash alone.
+**Result:** *Pwn3d!* Full administrative access confirmed via hash alone.
 
 ---
 
@@ -169,7 +169,7 @@ impacket-psexec lab.local/Administrator@192.168.56.10 -hashes aad3b435b51404eeaa
 
 ## 10. krbtgt Hash Extraction
 
-The krbtgt account hash was extracted — this enables Golden Ticket attacks, which allow an attacker to forge Kerberos tickets and maintain persistent domain admin access even after password resets.
+The krbtgt account hash was extracted. This enables **Golden Ticket attacks**, which allow an attacker to forge Kerberos tickets and maintain persistent domain admin access even after password resets.
 
 ```bash
 impacket-secretsdump lab.local/Administrator:'Password123!'@192.168.56.10 -just-dc-user krbtgt
@@ -191,7 +191,7 @@ krbtgt:502:aad3b435b51404eeaad3b435b51404ee:0dbf4b87c0bb3c0f514f9695d7593fb1:::
 
 ## 12. Kerberoasting
 
-A service account called `sqlservice` was created with an SPN registered on `MSSQLSvc/DC01.lab.local:1433` to simulate a real SQL Server environment. Any account with an SPN registered is vulnerable to Kerberoasting — an attacker can request the Kerberos ticket for that service and crack it offline to recover the plaintext password.
+A service account called sqlservice was created with an SPN registered on MSSQLSvc/DC01.lab.local:1433 to simulate a real SQL Server environment. Any account with an SPN registered is vulnerable to **Kerberoasting**. An attacker can request the Kerberos ticket for that service and crack it offline to recover the plaintext password.
 
 ### SPN Registered on DC01
 
@@ -217,7 +217,7 @@ hashcat -m 13100 kerberoast_hash.txt custom_wordlist2.txt --force
 
 <img src="16_kerberoast_cracked.png" width="800">
 
-**Result:** `$krb5tgs$23$*sqlservice$LAB.LOCAL$...:Summer2024`
+**Result:** **$krb5tgs$23$*sqlservice$LAB.LOCAL$...:Summer2024**
 
 The service account password was recovered offline without ever interacting with the account directly. In a real environment service accounts often have elevated privileges making this a critical finding.
 
@@ -233,25 +233,25 @@ bloodhound-python -u Administrator -p 'Password123!' -d lab.local -ns 192.168.56
 
 ### DC01 Object Information
 
-BloodHound identified DC01 as a Tier Zero asset with Unconstrained Delegation enabled — a critical misconfiguration in real environments that allows any authenticated user to impersonate any domain account including Domain Admins.
+BloodHound identified DC01 as a **Tier Zero asset** with **Unconstrained Delegation** enabled. This is a critical misconfiguration in real environments that allows any authenticated user to impersonate any domain account including Domain Admins.
 
 <img src="17_bloodhound_dc01_object_info.png" width="800">
 
 ### Attack Path from Administrator to DC01
 
-BloodHound mapped the full privilege path from `ADMINISTRATOR@LAB.LOCAL` to `DC01.LAB.LOCAL` through three separate group memberships — Domain Admins, Enterprise Admins, and Administrators — each with different permissions over the domain controller.
+BloodHound mapped the full privilege path from ADMINISTRATOR@LAB.LOCAL to DC01.LAB.LOCAL through three separate group memberships, Domain Admins, Enterprise Admins, and Administrators, each with different permissions over the domain controller.
 
 <img src="18_bloodhound_attack_path.png" width="800">
 
 ### Shortest Path to Domain Admins
 
-The Cypher query confirms `ADMINISTRATOR@LAB.LOCAL` is a direct member of `DOMAIN ADMINS@LAB.LOCAL` — a single hop to full domain control.
+The Cypher query confirms ADMINISTRATOR@LAB.LOCAL is a direct member of DOMAIN ADMINS@LAB.LOCAL: *a single hop to full domain control.*
 
 <img src="19_bloodhound_shortest_path_domain_admins.png" width="800">
 
 ### All Domain Users
 
-BloodHound enumerated all 9 accounts in the domain. KRBTGT and ADMINISTRATOR are both flagged as Tier Zero — the most critical accounts in the environment. SQLSERVICE is visible as the Kerberoastable service account.
+BloodHound enumerated all 9 accounts in the domain. KRBTGT and ADMINISTRATOR are both flagged as Tier Zero, the most critical accounts in the environment. SQLSERVICE is visible as the Kerberoastable service account.
 
 <img src="20_bloodhound_all_users.png" width="800">
 

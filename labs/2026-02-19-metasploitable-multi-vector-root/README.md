@@ -2,9 +2,9 @@
 
 ## Overview
 
-Full root compromise of a Metasploitable 2 host at 192.168.56.103 from Kali Linux, starting with `nmap` service enumeration and pivoting through three independent vectors — the vsftpd 2.3.4 backdoor, the Samba `usermap_script` RCE, and Distcc unauthenticated RCE followed by SUID-`nmap` local privilege escalation — each yielding root-level shell access.
+Full root compromise of a Metasploitable 2 host at **192.168.56.103** from Kali Linux, starting with nmap service enumeration and pivoting through three independent vectors: the **vsftpd 2.3.4** backdoor, the Samba **usermap_script** RCE, and Distcc unauthenticated RCE followed by SUID-nmap local privilege escalation, each yielding root-level shell access.
 
-**Target:** `192.168.56.103` (Metasploitable 2, VirtualBox isolated lab)
+**Target:** 192.168.56.103 (Metasploitable 2, VirtualBox isolated lab)
 
 ---
 
@@ -30,7 +30,7 @@ vsftpd 2.3.4 contains a known backdoor. Triggering it resulted in immediate root
 
 ## 3. Exploitation Path 2 – Samba usermap_script RCE
 
-Anonymous SMB enumeration confirmed accessible shares and version details. The `usermap_script` vulnerability was exploited to gain a root shell.
+Anonymous SMB enumeration confirmed accessible shares and version details. The **usermap_script** vulnerability was exploited to gain a root shell.
 
 <img src="01_samba_version_discovery.png" width="800">
 
@@ -40,15 +40,15 @@ Anonymous SMB enumeration confirmed accessible shares and version details. The `
 
 ---
 
-## 4. Exploitation Path 3 – Distcc RCE → SUID Privilege Escalation
+## 4. Exploitation Path 3 – Distcc RCE to SUID Privilege Escalation
 
-Distcc was identified on port 3632. Exploitation returned a low-privileged shell as `daemon`.
+Distcc was identified on port 3632. Exploitation returned a low-privileged shell as **daemon**.
 
 <img src="01_distcc_service_identified.png" width="800">
 
 <img src="03_distcc_initial_shell.png" width="800">
 
-Local enumeration revealed `/usr/bin/nmap` configured with the SUID bit set.
+Local enumeration revealed /usr/bin/nmap configured with the SUID bit set.
 
 <img src="04_suid_discovery.png" width="800">
 

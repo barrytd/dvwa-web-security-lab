@@ -2,29 +2,29 @@
 
 ## Overview
 
-End-to-end exploitation of DVWA at Low security level chaining SQL injection, reflected and stored XSS, CSRF, command injection, broken access control with IDOR, and LFI via `php://filter` to enumerate the database, execute arbitrary commands, escalate to admin functionality, and disclose backend database credentials.
+End-to-end exploitation of DVWA at Low security level chaining SQL injection, reflected and stored XSS, CSRF, command injection, broken access control with IDOR, and LFI via php://filter to enumerate the database, execute arbitrary commands, escalate to admin functionality, and disclose backend database credentials.
 
-**Target:** `DVWA (Local Lab)` (Apache 2.4, PHP 8.4, MariaDB — Security Level: Low)
+**Target:** DVWA (Local Lab) (Apache 2.4, PHP 8.4, MariaDB, Security Level: Low)
 
 ---
 
 ## 1. SQL Injection (Error-Based & Blind)
 
-Confirmed injectable parameter via error-based and boolean-based blind SQL injection. Database structure successfully enumerated. Blind injection relies on true/false logic rather than visible errors — prepared statements are required to prevent this class of vulnerability.
+Confirmed injectable parameter via error-based and boolean-based blind SQL injection. Database structure successfully enumerated. Blind injection relies on true/false logic rather than visible errors, so prepared statements are required to prevent this class of vulnerability.
 
 ---
 
 ## 2. Cross-Site Scripting (XSS)
 
-**Reflected XSS** — client-side script injected via user input and executed immediately in the browser.
+**Reflected XSS**: client-side script injected via user input and executed immediately in the browser.
 
-**Stored XSS** — persistent payload injected into the database and executed automatically on every page load. Stored XSS poses a higher risk as it can silently compromise authenticated user sessions without any further attacker interaction.
+**Stored XSS**: persistent payload injected into the database and executed automatically on every page load. Stored XSS poses a higher risk as it can silently compromise authenticated user sessions without any further attacker interaction.
 
 ---
 
 ## 3. Cross-Site Request Forgery (CSRF)
 
-Account password modified via forged request. No CSRF token validation was enforced. Authentication alone does not verify user intent — tokens must be validated server-side on every state-changing request.
+Account password modified via forged request. No CSRF token validation was enforced. Authentication alone does not verify user intent. Tokens must be validated server-side on every state-changing request.
 
 ---
 
@@ -36,7 +36,7 @@ OS-level commands injected via unsanitized input field. Arbitrary command execut
 
 ## 5. Authorization Bypass (Broken Access Control)
 
-Admin functionality was restricted through UI controls only with no server-side authorization enforcement. Logged in as non-admin user `gordonb` and accessed admin-only endpoints directly.
+Admin functionality was restricted through UI controls only with no server-side authorization enforcement. Logged in as non-admin user **gordonb** and accessed admin-only endpoints directly.
 
 #### Direct URL Access
 
@@ -60,7 +60,7 @@ Admin functionality was restricted through UI controls only with no server-side 
 
 ## 6. Local File Inclusion (LFI)
 
-The user-controlled `page` parameter was included directly without validation. Directory traversal used to access system files, Apache configuration, and application source via the `php://filter` wrapper.
+The user-controlled **page** parameter was included directly without validation. Directory traversal used to access system files, Apache configuration, and application source via the **php://filter** wrapper.
 
 #### /etc/passwd Disclosure
 
@@ -110,7 +110,7 @@ The user-controlled `page` parameter was included directly without validation. D
 - Encode all output to prevent XSS
 - Validate CSRF tokens server-side on every state-changing request
 - Never pass user input directly to system commands
-- Enforce authorization server-side — UI restrictions alone are not security controls
+- Enforce authorization server-side. UI restrictions alone are not security controls
 - Validate and whitelist file inclusion parameters, disable dangerous PHP wrappers
 
 ---

@@ -9,11 +9,11 @@
 
 ## Overview
 
-Compromise of the TryHackMe Steel Mountain Windows Server 2012 R2 box by exploiting Rejetto HFS 2.3 macro RCE (CVE-2014-6287) on port 8080 to land a shell as `steelmountain\bill`, then escalating to `NT AUTHORITY\SYSTEM` by planting a malicious `Advanced.exe` in the writable `C:\Program Files (x86)\IObit\` directory to hijack the unquoted service path of `AdvancedSystemCareService9` — completed both via Metasploit and manually using ExploitDB script 39161.py, msfvenom, a Python HTTP server, and netcat.
+Compromise of the TryHackMe Steel Mountain Windows Server 2012 R2 box by exploiting **Rejetto HFS 2.3** macro RCE (**CVE-2014-6287**) on port 8080 to land a shell as steelmountain\bill, then escalating to **NT AUTHORITY\SYSTEM** by planting a malicious Advanced.exe in the writable C:\Program Files (x86)\IObit\ directory to hijack the unquoted service path of **AdvancedSystemCareService9**. Completed both via Metasploit and manually using ExploitDB script 39161.py, msfvenom, a Python HTTP server, and netcat.
 
 ---
 
-**Target:** `10.65.152.31` (STEELMOUNTAIN — Windows Server 2012 R2 Datacenter, Build 9600)
+**Target:** **10.65.152.31** (STEELMOUNTAIN, Windows Server 2012 R2 Datacenter, Build 9600)
 
 ---
 
@@ -21,7 +21,7 @@ Compromise of the TryHackMe Steel Mountain Windows Server 2012 R2 box by exploit
 
 ### Phase 1: Reconnaissance
 
-An nmap scan with `-Pn` (ICMP blocked on TryHackMe machines) reveals the open ports on the target.
+An nmap scan with -Pn (ICMP blocked on TryHackMe machines) reveals the open ports on the target.
 
 ![01-nmap-scan](01-nmap-scan.png)
 
@@ -37,7 +37,7 @@ Browsing to port 80 reveals a basic company page for Steel Mountain. The employe
 
 ![04-employee-of-month](04-employee-of-month.png)
 
-Port 8080 exposes HFS 2.3, a lightweight file server with a known unauthenticated remote code execution vulnerability (CVE-2014-6287).
+Port 8080 exposes **HFS 2.3**, a lightweight file server with a known unauthenticated remote code execution vulnerability (**CVE-2014-6287**).
 
 ![02-hfs-web-server](02-hfs-web-server.png)
 
@@ -47,7 +47,7 @@ Port 8080 exposes HFS 2.3, a lightweight file server with a known unauthenticate
 
 ### Initial Shell
 
-The Metasploit module `exploit/windows/http/rejetto_hfs_exec` exploits a flaw in HFS 2.3's macro parsing to execute arbitrary commands on the target without authentication. A reverse shell is caught as `steelmountain\bill`.
+The Metasploit module exploit/windows/http/rejetto_hfs_exec exploits a flaw in HFS 2.3's macro parsing to execute arbitrary commands on the target without authentication. A reverse shell is caught as **steelmountain\bill**.
 
 ![03-initial-shell](03-initial-shell.png)
 
@@ -57,7 +57,7 @@ The Metasploit module `exploit/windows/http/rejetto_hfs_exec` exploits a flaw in
 
 ### Privilege Escalation via Unquoted Service Path
 
-PowerUp.ps1 is uploaded via Meterpreter and executed to enumerate privilege escalation vectors. It identifies the `AdvancedSystemCareService9` service as vulnerable to an unquoted service path attack.
+PowerUp.ps1 is uploaded via Meterpreter and executed to enumerate privilege escalation vectors. It identifies the **AdvancedSystemCareService9** service as vulnerable to an unquoted service path attack.
 
 ```
 powershell.exe -exec bypass -Command "& {Import-Module .\PowerUp.ps1; Invoke-AllChecks}"
@@ -65,15 +65,15 @@ powershell.exe -exec bypass -Command "& {Import-Module .\PowerUp.ps1; Invoke-All
 
 Key findings from PowerUp:
 
-- Service: `AdvancedSystemCareService9`
-- Path: `C:\Program Files (x86)\IObit\Advanced SystemCare\ASCService.exe`
+- Service: **AdvancedSystemCareService9**
+- Path: C:\Program Files (x86)\IObit\Advanced SystemCare\ASCService.exe
 - The path contains spaces and is unquoted
-- `CanRestart: True`
-- `bill` has write permissions to `C:\Program Files (x86)\IObit\`
+- *CanRestart: True*
+- bill has write permissions to C:\Program Files (x86)\IObit\
 
 ![06-powerup-results](06-powerup-results.png)
 
-Because the service path is unquoted and contains a space, Windows will attempt to resolve `C:\Program Files (x86)\IObit\Advanced.exe` before reaching the real binary. A malicious payload placed at that path will execute as SYSTEM when the service restarts.
+Because the service path is unquoted and contains a space, Windows will attempt to resolve C:\Program Files (x86)\IObit\Advanced.exe before reaching the real binary. A malicious payload placed at that path will execute as SYSTEM when the service restarts.
 
 A reverse shell payload is generated with msfvenom and uploaded to the writable directory:
 
@@ -90,7 +90,7 @@ sc start AdvancedSystemCareService9
 
 ![07-service-replaced](07-service-replaced.png)
 
-A shell is caught as `NT AUTHORITY\SYSTEM`.
+A shell is caught as **NT AUTHORITY\SYSTEM**.
 
 ![08-admin-shell](08-admin-shell.png)
 
@@ -104,7 +104,7 @@ A shell is caught as `NT AUTHORITY\SYSTEM`.
 
 ### Initial Shell Without Metasploit
 
-The same HFS 2.3 vulnerability is exploited manually using exploit script `39161.py` from ExploitDB. The script requires a hosted `nc.exe` binary to establish the reverse shell callback.
+The same HFS 2.3 vulnerability is exploited manually using exploit script **39161.py** from ExploitDB. The script requires a hosted nc.exe binary to establish the reverse shell callback.
 
 Setup on Kali:
 ```bash
@@ -122,13 +122,13 @@ nc -lvnp 4443
 python2 39161.py 10.65.152.31 8080
 ```
 
-The script downloads `nc.exe` from the attacker's HTTP server and executes it on the target, calling back with a cmd shell as `steelmountain\bill`.
+The script downloads nc.exe from the attacker's HTTP server and executes it on the target, calling back with a cmd shell as **steelmountain\bill**.
 
 ![11-no-metasploit-shell](11-no-metasploit-shell.png)
 
 ### Manual Enumeration
 
-winPEAS is pulled to the target and executed to enumerate privilege escalation vectors. It flags the same `AdvancedSystemCareService9` unquoted service path.
+winPEAS is pulled to the target and executed to enumerate privilege escalation vectors. It flags the same **AdvancedSystemCareService9** unquoted service path.
 
 To manually confirm unquoted service paths without automated tools:
 
@@ -153,7 +153,7 @@ sc stop AdvancedSystemCareService9
 sc start AdvancedSystemCareService9
 ```
 
-A shell is caught on the netcat listener as `NT AUTHORITY\SYSTEM` with zero Metasploit involvement.
+A shell is caught on the netcat listener as **NT AUTHORITY\SYSTEM** with zero Metasploit involvement.
 
 ![13-no-metasploit-system-shell](13-no-metasploit-system-shell.png)
 
@@ -183,8 +183,8 @@ When a Windows service binary path contains spaces and is not enclosed in quotat
 
 ## Key Takeaways
 
-- HFS 2.3 is a commonly encountered file server in CTF and real-world environments and should always be tested for CVE-2014-6287
+- HFS 2.3 is a commonly encountered file server in CTF and real-world environments and should always be tested for **CVE-2014-6287**
 - PowerUp.ps1 and winPEAS are complementary tools; running both reduces the chance of missing a privesc vector
 - Unquoted service paths are a common Windows misconfiguration, especially in third-party software installations
 - The same attack chain can be replicated entirely without Metasploit using ExploitDB scripts, msfvenom, Python HTTP server, and netcat
-- `CanRestart: True` is the critical factor that makes the unquoted path exploitable without waiting for a reboot
+- *CanRestart: True* is the critical factor that makes the unquoted path exploitable without waiting for a reboot

@@ -2,9 +2,9 @@
 
 ## Overview
 
-Boolean-based blind SQL injection against DVWA at High security level through an injectable cookie parameter, using `Burp Suite Intruder` in Sniper mode to extract the 32-character admin MD5 password hash one character at a time and cracking it offline with `md5sum` to recover the cleartext administrator password.
+Boolean-based blind SQL injection against DVWA at High security level through an injectable cookie parameter, using **Burp Suite Intruder** in Sniper mode to extract the 32-character admin MD5 password hash one character at a time and cracking it offline with md5sum to recover the cleartext administrator password.
 
-**Target:** `DVWA (Local Lab)` (Apache 2.4, MySQL — Security Level: High, attacker Kali Linux)
+**Target:** DVWA (Local Lab) (Apache 2.4, MySQL, Security Level: High, attacker Kali Linux)
 
 ---
 
@@ -22,7 +22,7 @@ Hash length confirmed using a boolean condition:
 1' AND LENGTH((SELECT password FROM users WHERE user_id = 1)) = 32#
 ```
 
-Result confirmed the hash is 32 characters — consistent with MD5.
+Result confirmed the hash is 32 characters, consistent with **MD5**.
 
 ---
 
@@ -34,17 +34,17 @@ Blind extraction performed using:
 1' AND substr((SELECT password FROM users WHERE user_id=1),1,1)='5'-- -
 ```
 
-Burp Intruder was configured in Sniper mode with a payload list of `0-9` and `a-f`, iterating one character position per attack. A TRUE condition was identified by:
+Burp Intruder was configured in Sniper mode with a payload list of **0-9** and **a-f**, iterating one character position per attack. A TRUE condition was identified by:
 
 - HTTP 200 response
 - Increased response length
-- "User ID exists" indicator in the body
+- *"User ID exists"* indicator in the body
 
 ---
 
 ## 3. Position 1 Extraction
 
-Only payload `5` produced a TRUE condition — HTTP 200 and increased response length.
+Only payload **5** produced a TRUE condition, HTTP 200 and increased response length.
 
 <img src="01_sqli_blind_high_position_1_extraction.png" width="800">
 
@@ -54,7 +54,7 @@ Only payload `5` produced a TRUE condition — HTTP 200 and increased response l
 
 ## 4. Position 2 Extraction
 
-Only payload `f` produced a TRUE condition.
+Only payload **f** produced a TRUE condition.
 
 <img src="02_sqli_blind_high_position_2_extraction.png" width="800">
 
@@ -64,7 +64,7 @@ Only payload `f` produced a TRUE condition.
 
 ## 5. ASCII-Based Boolean Extraction Confirmation
 
-ASCII comparison using `ORD()` and `MID()` used to confirm extraction logic during blind enumeration.
+ASCII comparison using ORD() and MID() used to confirm extraction logic during blind enumeration.
 
 <img src="blind_sqli_high_ascii_reference_proof.png" width="800">
 
@@ -90,7 +90,7 @@ echo -n password | md5sum
 
 <img src="03_sqli_blind_high_extracted_hash.png" width="800">
 
-Extracted hash matches the MD5 of `password`. Administrator credentials successfully recovered.
+Extracted hash matches the MD5 of *password*. Administrator credentials successfully recovered.
 
 ---
 

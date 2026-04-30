@@ -2,9 +2,9 @@
 
 ## Overview
 
-Multi-vector assessment of DVWA from Kali Linux chaining UNION-based SQLi at Medium level, session-cookie SQLi at High level, unauthenticated API v1 credential exposure enumerated with `curl`, and predictable session ID analysis to extract database metadata, bypass authentication, and confirm password hash disclosure.
+Multi-vector assessment of DVWA from Kali Linux chaining UNION-based SQLi at Medium level, session-cookie SQLi at High level, unauthenticated API v1 credential exposure enumerated with curl, and predictable session ID analysis to extract database metadata, bypass authentication, and confirm password hash disclosure.
 
-**Target:** `DVWA (Local Lab)` (Apache 2.4, MySQL — attacker Kali Linux)
+**Target:** DVWA (Local Lab) (Apache 2.4, MySQL, attacker Kali Linux)
 
 ---
 
@@ -46,7 +46,7 @@ Session input was concatenated directly into a SQL query with no sanitization or
 
 ## 3. API Security Testing
 
-API v1 exposed password hashes and allowed unauthenticated access. API v2 removed the password field entirely, demonstrating improved but incomplete security practice — authentication was still not enforced.
+API v1 exposed password hashes and allowed unauthenticated access. API v2 removed the password field entirely, demonstrating improved but incomplete security practice. Authentication was still not enforced.
 
 #### API v1 Password Exposure
 

@@ -9,9 +9,9 @@
 
 ## Overview
 
-Triaging five SOC Simulator phishing alerts for TheTryDaily by pivoting email and firewall logs in Splunk, the investigation cleared two false positives for legitimate HR vendor emails from `hrconnex.thm`, escalated a Microsoft credential harvesting campaign from the typosquatted `m1crosoftsupport.co` targeting `c.allen`, and escalated an Amazon-themed bit.ly phishing lure from `urgents@amazon.biz` clicked by `h.harris`, finishing the scenario with 260 points and first place.
+Triaging five SOC Simulator phishing alerts for *TheTryDaily* by pivoting email and firewall logs in Splunk, the investigation cleared two false positives for legitimate HR vendor emails from hrconnex.thm, escalated a Microsoft credential harvesting campaign from the typosquatted **m1crosoftsupport.co** targeting c.allen, and escalated an Amazon-themed bit.ly phishing lure from **urgents@amazon.biz** clicked by h.harris, finishing the scenario with **260 points** and first place.
 
-**Target:** `TheTryDaily` (simulated organization — email and firewall log data sources in Splunk)
+**Target:** TheTryDaily (simulated organization, email and firewall log data sources in Splunk)
 
 ---
 
@@ -55,18 +55,18 @@ The alerts fired due to the presence of an external link, which is expected beha
 
 ### Alert 3: Microsoft Account Phishing - m1crosoftsupport.co
 
-An inbound email was sent to c.allen@thetrydaily.thm from no-reply@m1crosoftsupport.co with the subject "Unusual Sign-In Activity on Your Microsoft Account."
+An inbound email was sent to c.allen@thetrydaily.thm from no-reply@m1crosoftsupport.co with the subject *"Unusual Sign-In Activity on Your Microsoft Account."*
 
 <img src="07-alert3-details.png" width="800">
 
 **Phishing indicators identified:**
 - Sender domain m1crosoftsupport.co replaces the letter "i" with the number 1 to impersonate Microsoft
 - Top level domain is .co instead of .com
-- Urgency language: "secure your account immediately"
+- Urgency language: *"secure your account immediately"*
 - Fabricated sign-in alert from Lagos, Nigeria to create panic
 - Link directed to m1crosoftsupport.co/login, a credential harvesting page
 
-Firewall log investigation confirmed that c.allen's endpoint 10.20.2.17 attempted to access the phishing URL. The connection was blocked by the Blocked Websites firewall rule.
+Firewall log investigation confirmed that c.allen's endpoint **10.20.2.17** attempted to access the phishing URL. The connection was blocked by the *Blocked Websites* firewall rule.
 
 <img src="06-alert3-splunk-investigation.png" width="800">
 
@@ -86,18 +86,18 @@ Alert 4 was a firewall alert triggered when endpoint 10.20.2.17 attempted to acc
 
 <img src="09-alert4-details.png" width="800">
 
-Splunk investigation revealed two events from 10.20.2.17: a Google search for "how to set up payroll system for small business" at 18:33, and an outbound connection attempt to the bit.ly URL at 18:36 which was blocked.
+Splunk investigation revealed two events from 10.20.2.17: a Google search for *"how to set up payroll system for small business"* at 18:33, and an outbound connection attempt to the bit.ly URL at 18:36 which was blocked.
 
 <img src="10-alert4-investigation.png" width="800">
 
-The email log confirmed the source: h.harris@thetrydaily.thm received a phishing email from urgents@amazon.biz impersonating Amazon with the subject "Your Amazon Package Couldn't Be Delivered - Action Required." The email contained the bit.ly URL and used a 48-hour deadline to create urgency.
+The email log confirmed the source: h.harris@thetrydaily.thm received a phishing email from urgents@amazon.biz impersonating Amazon with the subject *"Your Amazon Package Couldn't Be Delivered - Action Required."* The email contained the bit.ly URL and used a 48-hour deadline to create urgency.
 
 **Phishing indicators identified:**
 - Sender domain amazon.biz impersonating amazon.com using a lookalike domain
 - URL shortener used to hide the real malicious destination
-- Generic greeting "Dear Customer" instead of recipient's name
-- Urgency language: "48 hours or your package will be returned"
-- Firewall classified destination IP 67.199.248.11 as a known threat
+- Generic greeting *"Dear Customer"* instead of recipient's name
+- Urgency language: *"48 hours or your package will be returned"*
+- Firewall classified destination IP **67.199.248.11** as a known threat
 
 <img src="11-alert4-closure-part1.png" width="800">
 
@@ -125,7 +125,7 @@ The phishing email bypassed email security controls and h.harris clicked the mal
 
 - Pivoting between email logs and firewall logs is essential for phishing triage. The email log tells you what was sent, the firewall log tells you what the user did with it
 - Internal corroborating emails are valuable evidence when determining false positives. The h.harris email confirming hrconnex.thm as a legitimate vendor immediately resolved alerts 1 and 2
-- Typosquatting and lookalike domains are the most common phishing technique in this scenario. m1crosoftsupport.co and amazon.biz both rely on visual similarity to trusted brands
+- Typosquatting and lookalike domains are the most common phishing technique in this scenario. **m1crosoftsupport.co** and **amazon.biz** both rely on visual similarity to trusted brands
 - URL shorteners like bit.ly are a red flag in email context because they hide the real destination from both users and email filters
 - A blocked firewall connection does not mean no escalation is needed. The user still clicked the link and the email still bypassed controls, both of which require follow-up
 - Multiple phishing attempts targeting the same organization in a short window suggests an active campaign and should trigger broader employee notification

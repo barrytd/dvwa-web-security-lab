@@ -2,9 +2,9 @@
 
 ## Overview
 
-Manual compromise of a Metasploitable 2 host at 192.168.56.103 by exploiting the UnrealIRCd backdoor on port 6667 with `netcat` to land a root reverse shell, then re-entering as `msfadmin` and abusing unrestricted `sudo -i` to escalate, finishing with post-exploitation extraction of DVWA database credentials from `config.inc.php` and direct `mysql` access to dump user password hashes.
+Manual compromise of a Metasploitable 2 host at **192.168.56.103** by exploiting the UnrealIRCd backdoor on port 6667 with netcat to land a root reverse shell, then re-entering as **msfadmin** and abusing unrestricted sudo -i to escalate, finishing with post-exploitation extraction of DVWA database credentials from config.inc.php and direct mysql access to dump user password hashes.
 
-**Target:** `192.168.56.103` (Metasploitable 2, VirtualBox host-only network)
+**Target:** 192.168.56.103 (Metasploitable 2, VirtualBox host-only network)
 
 ---
 
@@ -18,7 +18,7 @@ Initial reconnaissance identified UnrealIRCd running on port 6667.
 
 ## 2. Manual UnrealIRCd Backdoor Exploitation
 
-The backdoored UnrealIRCd service was manually exploited using netcat — no Metasploit. A reverse shell was obtained with root privileges.
+The backdoored UnrealIRCd service was manually exploited using netcat, no Metasploit. A reverse shell was obtained with root privileges.
 
 <img src="03_reverse_shell_root.png" width="800">
 
@@ -30,7 +30,7 @@ Root access validated by accessing sensitive system files:
 
 ## 3. Privilege Escalation via Sudo Misconfiguration
 
-Logged in as `msfadmin` to simulate a lower-privileged compromise. Enumeration revealed unrestricted sudo permissions.
+Logged in as **msfadmin** to simulate a lower-privileged compromise. Enumeration revealed unrestricted sudo permissions.
 
 <img src="01_user_context_id.png" width="800">
 
@@ -48,7 +48,7 @@ sudo -i
 
 ## 4. Post-Exploitation – Credential & Database Access
 
-With root access, DVWA database credentials were extracted from `/var/www/dvwa/config/config.inc.php`. Direct MySQL access obtained and user credential hashes pulled from the DVWA database.
+With root access, DVWA database credentials were extracted from /var/www/dvwa/config/config.inc.php. Direct MySQL access obtained and user credential hashes pulled from the DVWA database.
 
 <img src="07_mysql_dvwa_users_access.png" width="800">
 

