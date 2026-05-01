@@ -78,18 +78,9 @@ Entry-level security professional building hands-on offensive and defensive expe
 
 ## Writing
 
-1. [TryHackMe – Nmap Live Host Discovery](https://medium.com/@r.perez3/tryhackme-nmap-live-host-discovery-5bbe1a32cb5b)
-2. [TryHackMe – Introduction to SIEM](https://medium.com/@r.perez3/tryhackme-introduction-to-siem-150fa97b8fc8)
-3. [SOC Simulator: Triaging Phishing Alerts with Splunk](https://medium.com/@r.perez3/what-triaging-five-phishing-alerts-taught-me-about-thinking-like-a-soc-analyst-c08917f2b06a)
-4. [What a Fake Username and a Borrowed Windows Tool Taught Me About Defending Networks](https://medium.com/@r.perez3/what-a-fake-username-and-a-borrowed-windows-tool-taught-me-about-defending-networks-0b73f190ea8f)
-5. [I Switched Sides: What It's Like Investigating an Attack Instead of Running One](https://medium.com/@r.perez3/i-switched-sides-what-its-like-investigating-an-attack-instead-of-running-one-3afa29c1f556)
-6. [HackPark: Brute Forcing BlogEngine.NET and Escalating to SYSTEM via Scheduled Task](https://medium.com/@r.perez3/hackpark-brute-forcing-blogengine-net-and-escalating-to-system-via-scheduled-task-d1e7473e4e01)
-7. [Steel Mountain: Exploiting HFS and Escalating to SYSTEM on Windows](https://medium.com/@r.perez3/steel-mountain-exploiting-hfs-and-escalating-to-system-on-windows-11851e71e650)
-8. [From Default Password to SYSTEM: TryHackMe Alfred](https://medium.com/@r.perez3)
-9. [18 Ways to Root a Linux Box: TryHackMe Linux PrivEsc Walkthrough](https://medium.com/@r.perez3/18-ways-to-root-a-linux-box-tryhackme-linux-privesc-walkthrough-68dd90e18b24)
-10. [I Roasted a Service Account and Walked Out with the Whole Domain: TryHackMe Attacktive Directory](https://medium.com/@r.perez3/i-roasted-a-service-account-and-walked-out-with-the-whole-domain-tryhackme-attacktive-directory-b7aaa05e1aea)
-11. [Kerberoasting and BloodHound: Two Attacks That Show Why Active Directory Is Hard to Defend](https://medium.com/@r.perez3/kerberoasting-and-bloodhound-two-attacks-that-show-why-active-directory-is-hard-to-defend-b893e68104a5)
-12. [From Zero to Domain Admin: Building and Attacking an Active Directory Lab](https://medium.com/@r.perez3/from-zero-to-domain-admin-building-and-attacking-an-active-directory-lab-8e1f95a8e205)
-13. [From Web to Root: Exploiting Kioptrix Level 2](https://medium.com/@r.perez3/from-web-to-root-exploiting-kioptrix-level-2-walkthrough-b07ef5a14fb1)
-14. [From WordPress to Root: Compromising Basic Pentesting 1](https://medium.com/@r.perez3/from-wordpress-to-root-compromising-basic-pentesting-1-vulnhub-6b83d60ce24b)
-15. [I Thought Learning Web Security Was About Payloads. I Was Wrong.](https://medium.com/@r.perez3/i-thought-learning-web-security-was-about-payloads-i-was-wrong-aa4b9892cbbe)
+Latest posts on [Medium](https://medium.com/@r.perez3):
+
+1. [TryHackMe Mr Robot CTF: WordPress Exploitation and SUID Nmap Privesc](https://medium.com/@r.perez3/tryhackme-mr-robot-ctf-wordpress-exploitation-and-suid-nmap-privesc-ea81c4813983)
+2. [TryHackMe Ignite: Exploiting Fuel CMS 1.4 for RCE and Root](https://medium.com/@r.perez3/tryhackme-ignite-exploiting-fuel-cms-1-4-for-rce-and-root-26cb16efda15)
+3. [TryHackMe Decryptify CTF](https://medium.com/@r.perez3/tryhackme-decryptify-ctf-1d15ca964622)
+4. [TryHackMe Nessus: My First Vulnerability Scan with Tenable](https://medium.com/@r.perez3/tryhackme-nessus-my-first-vulnerability-scan-with-tenable-5b570f1534d6)
