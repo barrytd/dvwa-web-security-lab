@@ -10,6 +10,7 @@ Entry-level security professional building hands-on offensive and defensive expe
 
 | Lab | Platform | Summary |
 |---|---|---|
+| [Brooklyn Nine Nine](labs/2026-05-05-tryhackme-brooklyn-nine-nine/README.md) | TryHackMe | Two complete attack chains to the same root: anonymous FTP plus rockyou Hydra to jake plus sudo less escape, and steghide on a web image to holt plus sudo nano NOPASSWD escape. |
 | [Ignite](labs/2026-05-01-tryhackme-ignite/README.md) | TryHackMe | Fuel CMS 1.4.1 unauth RCE (CVE-2018-16763) via create_function injection in the filter parameter, www-data shell, plaintext MySQL root password in database.php reused as system root. |
 | [Mr Robot](labs/2026-05-01-tryhackme-mr-robot/README.md) | TryHackMe | robots.txt to a leaked wordlist, WordPress username enumeration plus Hydra brute force, theme-editor PHP reverse shell, cracked an unsalted MD5 on CrackStation, and SUID nmap !sh to root. |
 | [Decryptify](labs/2026-04-29-tryhackme-decryptify/README.md) | TryHackMe | Forged invite codes by brute forcing a leaked seed constant, then padbuster against a date parameter to decrypt and re-encrypt commands for full RCE. |
@@ -50,6 +51,7 @@ Entry-level security professional building hands-on offensive and defensive expe
 
 | Lab | Skills Demonstrated |
 |---|---|
+| Brooklyn Nine Nine | Anonymous FTP enumeration, Hydra SSH brute force (rockyou), steghide extraction with weak passphrase, sudo shell escapes (less !sh and nano Execute Command), GTFOBins methodology, NOPASSWD audit |
 | Ignite | Fuel CMS version disclosure, CVE-2018-16763 unauth RCE (create_function code injection), Exploit-DB 47138.py, reverse shell as www-data, plaintext credential discovery in framework config, password reuse privesc (MySQL root to system root) |
 | Mr Robot | robots.txt disclosure, WordPress username enumeration, Hydra http-post-form brute force, theme-editor RCE (pentestmonkey PHP reverse shell), unsalted MD5 cracking (CrackStation), SUID nmap interactive-mode privesc |
 | Decryptify | Predictable token brute force (mt_srand seed recovery), padding oracle attack (padbuster decrypt + forge), CBC bit-flipping, command injection via decrypted input |
