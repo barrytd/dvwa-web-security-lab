@@ -41,6 +41,7 @@ Entry-level security professional building hands-on offensive and defensive expe
 
 | Lab | Platform | Summary |
 |---|---|---|
+| [ItsyBitsy](labs/2026-05-10-tryhackme-itsybitsy/README.md) | TryHackMe | Hunted a bitsadmin user-agent in Kibana connection_logs and traced a HEAD request to pastebin.com/yTg0Ah6a, mapping the activity to MITRE ATT&CK T1197 (BITS Jobs) and T1105 (Ingress Tool Transfer). |
 | [Introduction to SIEM](labs/2026-04-14-tryhackme-intro-to-siem/README.md) | TryHackMe | Triaged a cryptominer alert (cudominer.exe on HR_02), traced to a 4688 rule on *miner*, actioned as true positive. |
 | [SOC Simulator - Phishing Analysis](labs/2026-03-25-tryhackme-soc-simulator-phishing-analysis/README.md) | TryHackMe | Five phishing alerts triaged in Splunk: 2 false positives, 3 true positives, 260 points and first place. |
 | [Benign - LOLBIN Investigation](labs/2026-03-14-benign-lolbin-certutil-process-investigation/README.md) | TryHackMe | EventID 4688 hunt: imposter account, scheduled-task persistence, certutil.exe LOLBIN download. |
@@ -73,6 +74,7 @@ Entry-level security professional building hands-on offensive and defensive expe
 | Basic Pentesting 1 | WordPress exploitation, pkexec CVE-2021-4034 compilation and exploitation |
 | Metasploitable 2 (×2) | UnrealIRCd manual RCE, vsftpd/Samba/Distcc vectors, SUID nmap privesc |
 | DVWA labs (×3) | Full OWASP Top 10: SQLi (UNION/blind), XSS, CSRF, LFI, command injection, IDOR, API/session flaws |
+| ItsyBitsy | Kibana / ELK Discover, anomalous user-agent hunting (bitsadmin), LOLBin and trusted-service abuse detection, MITRE ATT&CK T1197 / T1105 / T1071.001 mapping, Zeek uid pivot methodology |
 | Intro to SIEM | Detection rule design, EventID 4688 analysis, alert triage (true vs false positive) |
 | SOC Simulator | Splunk pivot between email/firewall logs, phishing indicator analysis, escalation decisions |
 | Benign | SPL hunting, imposter account detection, LOLBIN analysis (certutil.exe), scheduled-task persistence |
