@@ -57,9 +57,7 @@ Hydra is pointed at SSH with username *jake* and the **rockyou.txt** wordlist (a
 hydra -l jake -P /usr/share/wordlists/rockyou.txt 10.64.148.145 ssh
 ```
 
-<img src="04-ssh-password cracked-using-hydra.png" width="800">
-
-**Recovered credentials:** jake : **987654321**
+Hydra returns a hit within seconds, since the password sits near the top of rockyou. **Recovered credentials:** jake : *(password redacted)*.
 
 ---
 
@@ -80,31 +78,13 @@ sudo less /etc/passwd
 !sh
 ```
 
-<img src="06-root-shell.png" width="800">
-
 This is a textbook **GTFOBins entry** (the community-curated database that catalogs every Unix binary with a known shell-escape under sudo, SUID, or capabilities). Both *less* and *nano*, used in the two paths of this room, are headline GTFOBins examples.
 
 ---
 
-### Phase 7: User Flag
+### Phase 7: User and Root Flags
 
-With root, the *user.txt* file under /home/holt is now readable.
-
-<img src="07-user-flag-txt.png" width="800">
-
-**User flag:** ee11cbb19052e40b07aac0ca060c23ee
-
-(That string is the MD5 of *password*. The flag is a real value, but it is a deliberately obvious choice for a teaching room.)
-
----
-
-### Phase 8: Root Flag
-
-/root/root.txt drops out the same way.
-
-<img src="08-root-flag-txt.png" width="800">
-
-**Root flag:** 63a9f0ea7bb98050796b649e85481845
+With root, *user.txt* under /home/holt and *root.txt* under /root are both readable in a single *cat*. Both flag values are deliberately omitted from this writeup.
 
 ---
 
@@ -126,9 +106,7 @@ The Apache instance on port 80 serves an image. Downloading it and running **ste
 steghide extract -sf <image>.jpg -p admin
 ```
 
-<img src="10-steghide-extraction.png" width="800">
-
-**Recovered credentials:** holt : **fluffydog12@ninenine**
+**Recovered credentials:** holt : *(password redacted)*
 
 Steghide hides files inside the **least significant bits** of image, audio, or video data (the bits that contribute the smallest amount to a pixel's color or a sample's amplitude, so flipping them produces a change the human eye and ear cannot detect). The carrier file looks visually identical to the original, so a defender browsing the web root would have no obvious reason to think anything was wrong with the image.
 
@@ -157,8 +135,6 @@ sudo nano
 ^R ^X
 Command to execute: reset; sh 1>&0 2>&0
 ```
-
-<img src="12-nano-privesc.png" width="800">
 
 *whoami* returns **root**, and the same root.txt drops out.
 

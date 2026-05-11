@@ -90,11 +90,9 @@ hydra -l milesdyson -P log1.txt 10.66.172.53 \
       http-post-form "/squirrelmail/src/redirect.php:login_username=^USER^&secretkey=^PASS^&js_autodetect_results=1&just_logged_in=1:Unknown user or password incorrect"
 ```
 
-<img src="08-hydra-password-cracked.png" width="800">
+**Recovered credentials:** milesdyson : *(password redacted)*
 
-**Recovered credentials:** milesdyson : **cyborg007haloterminator**
-
-The first line of log1.txt is the winning password, which is exactly the kind of finding the *attention.txt* note was hinting at.
+The winning password sits at the top of log1.txt, which is exactly the kind of finding the *attention.txt* note was hinting at.
 
 ---
 
@@ -108,13 +106,9 @@ Logging in with the recovered credentials reveals three emails in milesdyson's i
 
 ### Phase 10: SMB Credential Disclosure via Email
 
-Opening the email surfaces the *milesdyson* SMB share password (the personal share, distinct from the anonymous one):
+Opening the email surfaces the *milesdyson* SMB share password (the personal share, distinct from the anonymous one). The email body contains a plaintext line of the form *"We have changed your smb password after system malfunction. Password: ..."* with the actual value redacted from this writeup.
 
-> *"We have changed your smb password after system malfunction. Password: )s{A&2Z=F^n_E.B\`"*
-
-<img src="10-email-smb-password-reset.png" width="800">
-
-**SMB credentials:** milesdyson : **)s{A&2Z=F^n_E.B\`**
+**SMB credentials:** milesdyson : *(password redacted)*
 
 This pattern, an *automated password reset email to a user's inbox*, is one of the most common credential-leak vectors in real engagements. If an attacker controls the inbox, they control every account whose reset workflow lands there.
 
@@ -194,11 +188,7 @@ A *python3 -c 'import pty; pty.spawn("/bin/bash")'* call upgrades the dumb shell
 
 ### Phase 18: User Flag
 
-milesdyson's home directory is readable to www-data, so *cat /home/milesdyson/user.txt* drops the first flag.
-
-<img src="18-first-flag.png" width="800">
-
-**User flag:** 7ce5c2109a40f958099283600a9ae807
+milesdyson's home directory is readable to www-data, so *cat /home/milesdyson/user.txt* drops the first flag. The flag value is omitted from this writeup.
 
 ---
 
@@ -221,11 +211,7 @@ touch -- '--checkpoint=1'
 touch -- '--checkpoint-action=exec=sh shell.sh'
 ```
 
-Listener on 5555 catches the cron's tar run, *whoami* returns **root**, and /root/root.txt is readable.
-
-<img src="19-root-flag.png" width="800">
-
-**Root flag:** 3f0372db24753accc7179a282cd6a949
+Listener on 5555 catches the cron's tar run, *whoami* returns **root**, and /root/root.txt is readable. Root flag value omitted from this writeup.
 
 ---
 
@@ -278,7 +264,7 @@ The root cron runs a backup script that calls tar against a glob (*\**) in a dir
 ## Key Takeaways
 
 - **enum4linux is the right first move against any open Samba port.** Username enumeration via SID resolution is a free, unauthenticated foothold that converts every downstream authentication step from a two-axis brute force (user, password) into a one-axis one (password). The whole Skynet chain rests on knowing *milesdyson* is a real user before the first Hydra attempt.
-- **A wordlist is sometimes the loot.** log1.txt looked like a Samba share artifact at first glance and turned out to be the exact password rotation history Hydra needed. Read every file on every accessible share, even the ones that look operational rather than sensitive. The line between log file and credential dump is *whatever the operator wrote into the log*.
+- **Finding a wordlist is critical.** log1.txt looked like a Samba share artifact at first glance and turned out to be the exact password rotation history Hydra needed. Read every file on every accessible share, even the ones that look operational rather than sensitive. The line between log file and credential dump is *whatever the operator wrote into the log*.
 - **Webmail compromise is a credential factory.** Mailboxes hold every password reset link, every "your new password is X" email, every account verification code. Compromising one mailbox quietly compromises every account whose recovery flow lands there. Hydra against SquirrelMail in this room is small from a CVE standpoint and *load-bearing* from a chain standpoint.
 - **Remote File Inclusion is rarer than it used to be, and it still kills.** *allow_url_include* defaults to off on modern PHP exactly because RFI is a one-line bug from "user input lands in include()" to "RCE as the web user." Cuppa CMS is abandoned and unpatched, which is the actual lesson: every CMS install needs a maintenance owner, and unmaintained installs need to be removed, not patched in place.
 - **tar wildcard injection is a classic for a reason.** It only needs three things: a privileged user (root cron), a writable directory the privileged user globs, and a backup tool that interprets dashes as flags. Real environments produce all three combinations constantly (logrotate, backups, cleanup scripts), and the fix (a single *--* on the command line or *find -print0 | xargs -0*) is one line. Always audit cron and systemd timers for any wildcard touching a service-writable path.

@@ -143,15 +143,13 @@ Full Administrator access to the domain controller confirmed.
 
 ## 9. Flags Captured
 
-All three flags retrieved from user desktops across the domain.
+All three flags retrieved from user desktops across the domain. Flag values omitted from this writeup.
 
 ```powershell
 type C:\Users\svc-admin\Desktop\user.txt.txt
 type C:\Users\backup\Desktop\PrivEsc.txt
 type C:\Users\Administrator\Desktop\root.txt
 ```
-
-<img src="09_flags.png" width="800">
 
 ---
 

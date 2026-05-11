@@ -117,13 +117,7 @@ A Metasploit handler was set up on port 6666. When the scheduler fired, a SYSTEM
 
 <img src="08-admin-shell.png" width="800">
 
-**User flag (Jeff's Desktop):**
-
-<img src="11-user-flag.png" width="800">
-
-**Root flag:**
-
-<img src="12-root-flag.png" width="800">
+Both *user.txt* (Jeff's Desktop) and *root.txt* are readable from the SYSTEM shell. Flag values omitted from this writeup.
 
 ---
 

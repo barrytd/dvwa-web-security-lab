@@ -64,11 +64,7 @@ Two findings at once: a **LOLBin** (*living off the land binary*, a trusted buil
 
 ### Phase 4: Visit the Pastebin URL
 
-Following the URI from the log record (https://pastebin.com/yTg0Ah6a) loads a Pastebin titled **secret.txt** posted by an anonymous guest on Apr 6, 2022. The body of the paste contains the flag.
-
-<img src="04-secret-file-and-flag.png" width="800">
-
-**Flag:** THM{SECRET__CODE}
+Following the URI from the log record loads a Pastebin titled **secret.txt** posted by an anonymous guest on Apr 6, 2022. The body of the paste contains the flag. In a real engagement this is the **stage two** retrieval, the moment the analyst confirms the host actually pulled down attacker-controlled content rather than just performing a benign check, and would be the trigger to isolate the workstation and begin incident response.
 
 ---
 

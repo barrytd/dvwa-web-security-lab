@@ -79,7 +79,7 @@ The Fuel install instructions pointed straight at the database config file. Read
 $db['default'] = array(
     'hostname' => 'localhost',
     'username' => 'root',
-    'password' => 'mememe',
+    'password' => '<redacted>',
     'database' => 'fuel_schema',
     'dbdriver' => 'mysqli',
     ...
@@ -88,9 +88,7 @@ $db['default'] = array(
 
 <img src="06-database-config.png" width="800">
 
-**MySQL root password:** mememe
-
-By itself, this is a *database* credential, not a system credential. But on small installs it is extremely common for the same operator password to be reused for the system *root* account, so testing it is the obvious next step.
+By itself, the MySQL root password is a *database* credential, not a system credential. But on small installs it is extremely common for the same operator password to be reused for the system *root* account, so testing it is the obvious next step.
 
 ---
 
@@ -98,19 +96,11 @@ By itself, this is a *database* credential, not a system credential. But on smal
 
 Before pivoting to root, the user flag is collected from www-data's home directory.
 
-<img src="07-flag-txt.png" width="800">
-
-**User flag:** 6470e394cbf6dab6a91682cc8585059b
-
 ---
 
 ### Phase 8: Reused Password to Root
 
-*su root* with the MySQL password *mememe* succeeds on the first try, confirming that the database credential and the system credential were the same string. /root is fully readable, and root.txt drops out.
-
-<img src="08-root-txt.png" width="800">
-
-**Root flag:** b9bbcb33e11b80be759c4e844862482d
+*su root* with the recovered MySQL password succeeds on the first try, confirming that the database credential and the system credential were the same string. /root is fully readable, and root.txt drops out.
 
 ---
 

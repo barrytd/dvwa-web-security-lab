@@ -94,11 +94,7 @@ Any one of these would warrant investigation. Together they are conclusive.
 
 ### Phase 5: Flag Extraction
 
-Selecting the correct action surfaced the room flag.
-
-<img src="05_flag.png" width="800">
-
-**Flag:** THM{000_SIEM_INTRO}
+Selecting the correct triage action (raise as a true positive alert) surfaced the room flag. Flag value omitted from this writeup.
 
 ---
 

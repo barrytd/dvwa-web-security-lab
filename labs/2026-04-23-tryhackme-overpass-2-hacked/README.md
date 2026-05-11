@@ -173,16 +173,7 @@ The deface page served by the attackers from port 80 is still live. A visual con
 
 ### Phase 10: SSH as james and User Flag
 
-Logging in via the attacker's backdoor on the SSH port with james:november16 produced a shell.
-
-<img src="12-user-flag.png" width="800">
-
-```
-james@overpass-production:/home/james$ cat user.txt
-thm{d119b4fa8c497ddb0525f7ad200e6567}
-```
-
-**User flag:** thm{d119b4fa8c497ddb0525f7ad200e6567}
+Logging in via the attacker's backdoor on the SSH port with james:november16 produced a shell. *cat user.txt* drops the first flag (value omitted from this writeup).
 
 ---
 
@@ -199,14 +190,10 @@ james@overpass-production:/home/james$ ./.suid_bash -p
 
 The **-p** flag is the entire trick. By default, bash drops privileges when started from a SUID binary; -p tells it not to, which is why any SUID-bit bash with -p is effectively sudo without a password.
 
-<img src="14-root-flag.png" width="800">
-
 ```
 .suid_bash-4.4# cat /root/root.txt
-thm{d53b2684f169360bb9606c333873144d}
+(flag value omitted from this writeup)
 ```
-
-**Root flag:** thm{d53b2684f169360bb9606c333873144d}
 
 ---
 

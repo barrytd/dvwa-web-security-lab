@@ -102,11 +102,7 @@ certutil.exe is a legitimate Windows Certificate Services utility. The -urlcache
 
 ### Phase 5: Flag Extraction
 
-Visiting the C2 URL directly in a browser reveals the malicious content and the flag embedded in the payload.
-
-<img src="05-thm-flag.png" width="800">
-
-**THM flag retrieved from C2 server.**
+Visiting the C2 URL directly in a browser reveals the malicious content and the flag embedded in the payload. Flag value omitted from this writeup.
 
 ---
 

@@ -45,13 +45,7 @@ Port **10021** appeared running an unknown service. Six TCP ports open in total.
 
 ### Phase 2: HTTP Server Header Flag
 
-Inspecting the HTTP response headers in the browser from the web server on port 80 revealed a flag embedded in the Server header.
-
-<img src="03-http-header-flag.png" width="800">
-
-The server identified itself as *lighttpd* with the flag appended directly to the header value.
-
-**Flag:** THM{web_server_25352}
+Inspecting the HTTP response headers in the browser from the web server on port 80 revealed a flag embedded directly in the *Server* header. The server identified itself as *lighttpd* with a THM-formatted flag appended to the header value. Flag value omitted from this writeup.
 
 ---
 
@@ -59,15 +53,11 @@ The server identified itself as *lighttpd* with the flag appended directly to th
 
 Using Telnet to connect to the SSH service on port 22 grabbed the SSH banner before any authentication was attempted.
 
-<img src="04-ssh-header-flag.png" width="800">
-
 ```
 telnet 10.65.141.64 22
 ```
 
-The banner returned *SSH-2.0-OpenSSH_8.2p1* with a flag appended to the version string.
-
-**Flag:** THM{946219583339}
+The banner returned *SSH-2.0-OpenSSH_8.2p1* with a flag appended to the version string. Flag value omitted.
 
 ---
 
@@ -75,27 +65,11 @@ The banner returned *SSH-2.0-OpenSSH_8.2p1* with a flag appended to the version 
 
 The unknown service on port 10021 was an FTP server running vsftpd 3.0.5. Two usernames obtained through social engineering, **eddie** and **quinn**, were targeted with Hydra using the rockyou wordlist.
 
-<img src="05-quinn-credentials.png" width="800">
-
 ```
 hydra -l quinn -P /usr/share/wordlists/rockyou.txt 10.65.141.64 ftp -s 10021
 ```
 
-Hydra cracked quinn's password: **andrea**. Logging in via FTP and listing files revealed ftp_flag.txt.
-
-<img src="06-get-ftp-flag.png" width="800">
-
-```
-ftp> get ftp_flag.txt
-```
-
-<img src="07-ftp-flag.png" width="800">
-
-```
-cat ftp_flag.txt
-```
-
-**Flag:** THM{321452667098}
+Hydra cracked quinn's password in seconds. Logging in via FTP and listing files revealed *ftp_flag.txt*, which was downloaded and read. Recovered credentials and flag value omitted.
 
 ---
 
@@ -105,9 +79,7 @@ The final challenge required scanning the target as covertly as possible to avoi
 
 <img src="08-covert-scan.png" width="800">
 
-A successful covert scan achieved 0% detection and revealed the final flag.
-
-**Flag:** THM{f7443f99}
+A successful covert scan achieved 0% detection and revealed the final flag. Flag value omitted.
 
 ---
 

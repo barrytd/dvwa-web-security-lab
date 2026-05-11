@@ -51,9 +51,7 @@ The Metasploit module exploit/windows/http/rejetto_hfs_exec exploits a flaw in H
 
 ![03-initial-shell](03-initial-shell.png)
 
-**User flag retrieved:**
-
-![05-user-flag](05-user-flag.png)
+**User flag retrieved.** Flag value omitted from this writeup.
 
 ### Privilege Escalation via Unquoted Service Path
 
@@ -94,9 +92,7 @@ A shell is caught as **NT AUTHORITY\SYSTEM**.
 
 ![08-admin-shell](08-admin-shell.png)
 
-**Root flag retrieved:**
-
-![09-root-flag](09-root-flag.png)
+**Root flag retrieved.** Flag value omitted from this writeup.
 
 ---
 
@@ -157,9 +153,7 @@ A shell is caught on the netcat listener as **NT AUTHORITY\SYSTEM** with zero Me
 
 ![13-no-metasploit-system-shell](13-no-metasploit-system-shell.png)
 
-**Root flag retrieved (no Metasploit):**
-
-![15-root-flag](15-root-flag.png)
+**Root flag retrieved without Metasploit.** Flag value omitted.
 
 **Room completed:**
 

@@ -55,11 +55,7 @@ Browsing to http://10.65.148.191/ loads an interactive Mr Robot themed page with
 
 ### Phase 5: First Key
 
-Fetching /key-1-of-3.txt returns the first flag directly.
-
-<img src="05-first-key.png" width="800">
-
-**First key:** 073403c8a58a1f80d943455fb30724b9
+Fetching /key-1-of-3.txt returns the first flag directly in the browser. The takeaway is not the value itself but the lesson that *robots.txt is an index for attackers, not an access control*.
 
 ---
 
@@ -108,7 +104,7 @@ Hydra returns a hit after roughly two minutes:
 
 <img src="10-hydra-brute-force.png" width="800">
 
-**Recovered credentials:** elliot : **ER28-0652**
+**Recovered credentials:** elliot : *(password redacted)*
 
 ---
 
@@ -144,11 +140,7 @@ The shell is non-interactive at first, so the usual *python -c 'import pty; pty.
 
 ### Phase 14: Discovering the robot Hash
 
-Inside /home/robot, two files are readable: *key-2-of-3.txt* (which is owned by robot and not readable as daemon) and *password.raw-md5* (which **is** readable). Catting the latter reveals a *user:hash* line for robot.
-
-<img src="14-raw-md5.png" width="800">
-
-**Hash:** robot : c3fcd3d76192e4007dfb496cca67e13b (raw MD5)
+Inside /home/robot, two files are readable: *key-2-of-3.txt* (which is owned by robot and not readable as daemon) and *password.raw-md5* (which **is** readable). Catting the latter reveals a *user:hash* line for robot in *raw MD5* format.
 
 MD5 (a fast hashing algorithm now considered broken for passwords because GPUs can try billions of guesses per second) is exactly the wrong choice for storing credentials, and *raw* (unsalted, no per-user random value mixed in) makes it trivially crackable.
 
@@ -158,19 +150,11 @@ MD5 (a fast hashing algorithm now considered broken for passwords because GPUs c
 
 CrackStation maintains precomputed lookup tables of common passwords mapped to their MD5 (and other) hashes. Pasting the hash returns the plaintext **immediately**, which means the password was already in CrackStation's dictionary.
 
-<img src="15-crackstation-md5-hash.png" width="800">
-
-**Recovered password:** abcdefghijklmnopqrstuvwxyz
-
 ---
 
 ### Phase 16: Second Key via su robot
 
 With the password in hand, *su robot* upgrades the session from daemon to robot. The home directory is now readable end to end, including key-2-of-3.txt.
-
-<img src="16-second-key.png" width="800">
-
-**Second key:** 822c73956184f694993bede3eb39f959
 
 ---
 
@@ -183,10 +167,6 @@ find / -perm -4000 -type f 2>/dev/null
 nmap --interactive
 nmap> !sh
 ```
-
-<img src="17-nmap-interactive-suid-privesc-and-third-key.png" width="800">
-
-**Third key:** 04787ddef27c3dee1ee161b21670b4e4
 
 ---
 

@@ -121,18 +121,12 @@ The passphrase landed in about a second, confirming both the user identity (Jame
 
 Logging in with the cracked key produced a shell as **james** and access to the user flag.
 
-<img src="08-ssh-login-and-flag.png" width="800">
 
 ```
 ssh -i james_key james@10.65.167.65
 ```
 
-```
-james@ip-10-65-167-65:~$ cat user.txt
-thm{65c1aaf000506e56996822c6281e6bf7}
-```
-
-**User flag:** thm{65c1aaf000506e56996822c6281e6bf7}
+A clean interactive session lands as **james**, and *cat user.txt* drops the first flag. The flag value is omitted from this writeup.
 
 ---
 
@@ -166,10 +160,8 @@ connect to [192.168.203.76] from (UNKNOWN) [10.65.167.65] 36446
 # whoami
 root
 # cat /root/root.txt
-thm{7f336f8c359dbac18d54fdd64ea753bb}
+(flag value omitted from this writeup)
 ```
-
-**Root flag:** thm{7f336f8c359dbac18d54fdd64ea753bb}
 
 ---
 

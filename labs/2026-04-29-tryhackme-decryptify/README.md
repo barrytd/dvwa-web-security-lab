@@ -121,7 +121,7 @@ A small PHP script iterates constant_value from 0 upward, runs the algorithm aga
 
 <img src="12-brute-force-constant.png" width="800">
 
-**Recovered constant:** 99999
+**Recovered constant:** *(value redacted)*
 
 With every variable in the algorithm now known, a valid invite code can be minted for any email.
 
@@ -129,7 +129,7 @@ With every variable in the algorithm now known, a valid invite code can be minte
 
 ### Phase 13: Forging an Invite for hello@fake.thm
 
-The same PHP script is run with email = "hello@fake.thm" and constant_value = 99999.
+The same PHP script is run with email = "hello@fake.thm" and the recovered constant_value.
 
 <img src="15-invite-code-generator.png" width="800">
 
@@ -141,11 +141,7 @@ The script outputs a fresh invite code:
 
 ### Phase 14: Authenticated as hello@fake.thm - First Flag
 
-Submitting hello@fake.thm with the forged invite code on the **Login with Invite Code** tab logs into the dashboard. The greeting line contains the first flag.
-
-<img src="14-successful-login-first-flag.png" width="800">
-
-**First flag:** THM{CryptographyPwn007}
+Submitting hello@fake.thm with the forged invite code on the **Login with Invite Code** tab logs into the dashboard. The greeting line contains the first flag (value omitted from this writeup).
 
 ---
 
@@ -181,7 +177,7 @@ After thousands of byte-by-byte requests, padbuster recovers the intermediate st
 
 <img src="18-padding-oracle-results.png" width="800">
 
-**Recovered plaintext:** date +%Y
+**Recovered plaintext:** *(short shell command, value redacted)*
 
 The server has been blindly executing the decrypted ciphertext as a shell command. The dashboard literally pipes the ciphertext through openssl_decrypt and then through system().
 
@@ -201,17 +197,13 @@ padbuster outputs a freshly-minted base64 ciphertext that the server's key will 
 
 <img src="20-padding-oracle-encrypt-result.png" width="800">
 
-**Forged ciphertext:** qEB9Yi3gzNbFYOYCbgtCM%2FY2rl6GdTqN1s4PpDTYbkAAAAAAAAAAA%3D%3D
+**Forged ciphertext:** *(base64 value redacted)*
 
 ---
 
 ### Phase 18: RCE - Final Flag
 
-Loading the dashboard with the forged ciphertext as the date parameter causes the server to decrypt the value into "cat /home/ubuntu/flag.txt", execute it, and surface the flag in the page footer.
-
-<img src="21-rce-flag.png" width="800">
-
-**Final flag:** THM{GOT_COMMAND_EXECUTION001}
+Loading the dashboard with the forged ciphertext as the date parameter causes the server to decrypt the value into "cat /home/ubuntu/flag.txt", execute it, and surface the flag in the page footer. Final flag value omitted from this writeup.
 
 ---
 
