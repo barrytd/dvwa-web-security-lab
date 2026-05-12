@@ -2,7 +2,7 @@
 
 Entry-level security professional building hands-on offensive and defensive experience through documented labs, CTF challenges, and blue team investigations.
 
-**[TryHackMe](https://tryhackme.com/p/bxrry)** · **[Medium](https://medium.com/@r.perez3)**
+**[TryHackMe](https://tryhackme.com/p/bxrry)** · **[Portfolio Blog](https://barrytd.github.io)**
 
 ---
 
@@ -82,11 +82,6 @@ Entry-level security professional building hands-on offensive and defensive expe
 
 ---
 
-## Writing
+## Read These as Blog Posts
 
-Latest posts on [Medium](https://medium.com/@r.perez3):
-
-1. [TryHackMe Mr Robot CTF: WordPress Exploitation and SUID Nmap Privesc](https://medium.com/@r.perez3/tryhackme-mr-robot-ctf-wordpress-exploitation-and-suid-nmap-privesc-ea81c4813983)
-2. [TryHackMe Ignite: Exploiting Fuel CMS 1.4 for RCE and Root](https://medium.com/@r.perez3/tryhackme-ignite-exploiting-fuel-cms-1-4-for-rce-and-root-26cb16efda15)
-3. [TryHackMe Decryptify CTF](https://medium.com/@r.perez3/tryhackme-decryptify-ctf-1d15ca964622)
-4. [TryHackMe Nessus: My First Vulnerability Scan with Tenable](https://medium.com/@r.perez3/tryhackme-nessus-my-first-vulnerability-scan-with-tenable-5b570f1534d6)
+All of the labs above are also published as beginner-friendly, answer-free writeups on the companion site: **[barrytd.github.io](https://barrytd.github.io)**.
