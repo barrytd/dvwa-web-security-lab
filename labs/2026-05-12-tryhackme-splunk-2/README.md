@@ -312,6 +312,41 @@ In CyberChef, the decode chain that worked: *From Base64 â†’ Remove null bytes â
 
 ---
 
+## Framework Mapping
+
+The room ends by asking the analyst to translate raw findings into two industry-standard analysis frameworks. This is the part most beginners skip and most senior SOC analysts spend the majority of their time on, because frameworks are how investigations get communicated to leadership, IR teams, and threat-intel partners.
+
+### Diamond Model of Intrusion Analysis
+
+The **Diamond Model** is a four-cornered model for describing an intrusion. Every adversary event has an **Adversary**, **Capability**, **Infrastructure**, and **Victim**. The corners are connected by a **socio-political axis** (the *why*) and a **technical axis** (the *how*).
+
+Applied to the Taedonggang campaign:
+
+<img src="splunk-diamond-model.png" width="800">
+
+- **Adversary:** nation-state sponsored, located in a +8.5 timezone, uses Korean-encoded language, uses Hancom Thinkfree Office (Korean MS Office equivalent).
+- **Capability:** PowerShell Empire, spear phishing.
+- **Infrastructure:** European VPS servers.
+- **Victim:** Western innovative brewers and home brewing companies.
+- **Socio-political axis:** seeking to obtain high-end Western beers for production in their own breweries.
+- **Technical axis:** WMI lateral movement, self-signed SSL/TLS, FTP / DNS exfiltration, *.zip*-suffix decoys, Korean fonts on documents that translate to English, *super.svc* / *svcms* for persistence, schtasks.exe for reboot persistence, *Naenara* user-agent, YMLP, *+8.5 hour timezone*.
+
+The framework forces the analyst to answer questions outside the SIEM (the *why*, the *who*) by pivoting through open-source intelligence and threat-intel feeds. That broader picture is what gets escalated to executives, not the raw SPL queries.
+
+### MITRE ATT&CK Mapping
+
+**MITRE ATT&CK** is the industry-standard taxonomy of adversary tactics and techniques. Each column is a tactic (Initial Access, Execution, Persistence, Privilege Escalation, Defense Evasion, Credential Access, Discovery, Lateral Movement, Collection, Exfiltration, Command and Control). Each cell is a specific technique.
+
+The room provides a pre-marked matrix highlighting the techniques the Taedonggang campaign exercised:
+
+<img src="splunk-mitre-attack.png" width="800">
+
+Highlighted techniques observed across the BOTSv2 dataset include **Spearphishing Attachment** (Initial Access), **PowerShell** + **Scheduled Task** (Execution + Persistence), **Modify Registry** (Defense Evasion), **Account / System Information Discovery**, **Remote Services** (Lateral Movement), **Data Compressed** (Collection), and **Standard Application Layer Protocol** (Command and Control).
+
+Mapping observed events to ATT&CK technique IDs makes detection engineering follow logically: each highlighted technique points at a known set of detection rules, telemetry sources, and mitigations published in the framework. It also makes campaign comparison possible: any future campaign with the same technique fingerprint can be flagged as a likely Taedonggang follow-up.
+
+---
+
 ## Detection Summary
 
 ### Outbound Email to Competitor Domain (CWE-200: Information Exposure)
