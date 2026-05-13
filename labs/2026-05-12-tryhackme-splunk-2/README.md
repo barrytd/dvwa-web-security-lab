@@ -1,7 +1,7 @@
 # Splunk 2 - BOTSv2 Investigation Across Four Adversary Scenarios
 
 **Platform:** TryHackMe
-**Difficulty:** Hard
+**Difficulty:** Medium
 **Type:** Blue Team / Detection (Splunk + BOTSv2)
 **Date:** 2026-05-12
 
